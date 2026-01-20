@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('MEET_POPULATION') }}
+{% endblock %}
+
+{% block main_title %}
+<span style="font-weight: bold">{{ res_value('MEET_POPULATION') }}</span>
+{% endblock %}
+
+{% block link_style %}
+<!--<link rel="stylesheet" type="text/css" href="/static/common_style/filters.css">
+<link rel="stylesheet" type="text/css" href="/static/{{session['style']}}/filters.css">-->
+{% endblock %}
+
+{% block body %}
+
+<div id="irr-population-form">
+    <form>
+        <!-- Дата -->
+        <div>
+            <label>{{ res_value('MEET_DATE') }}:
+                <input class="input_d" style="margin-left: 12px; max-width: 132px" type="date" name="meet_date" required>
+            </label>
+        </div>
+
+        <!-- Регион -->
+        <div style="padding-top: 6px">
+            <label>Регион</label>
+            <select class="input_s" name="region" required>
+                <option value="">Выберите регион</option>
+            </select>
+        </div>
+
+        <!-- Район -->
+        <div style="padding-top: 6px">
+            <label>Район</label>
+            <select class="input_s" name="district" required>
+                <option value="">Выберите район</option>
+            </select>
+        </div>
+
+        <!-- Количество участников -->
+        <div style="padding-top: 6px">
+            <label>Количество участников
+                <input class="input_s" style="max-width: 80px" type="number" name="participants_total" min="1" required>
+            </label>
+        </div>
+
+        <!-- Количество женщин -->
+        <div style="padding-top: 6px">
+            <label>Количество женщин
+                <input class="input_s" style="max-width: 80px" type="number" name="participants_women" min="0" required>
+            </label>
+        </div>
+
+        <!-- Спикер -->
+        <div style="padding-top: 6px">
+            <label>ФИО спикера
+                <input class="input_s" type="text" name="speaker_fio" list="speakers" required>
+            </label>
+        </div>
+
+        <!-- Формат -->
+        <div style="padding-top: 6px">
+            <label>Формат встречи</label>
+            <select class="input_s" style="max-width: 170px" name="meeting_format" required>
+                <option value="">Выберите формат</option>
+                <option value="offline">На месте</option>
+                <option value="online">Онлайн</option>
+            </select>
+        </div>
+
+        <!-- Совместные организации -->
+        <div style="padding-top: 6px">
+            <label>Организация (совместно)</label>
+            <select name="partners[]" multiple>
+                <option value="self">Проведено самостоятельно</option>
+            </select>
+        </div>
+
+        <!-- Место проведения -->
+        <div style="padding-top: 6px">
+            <label>Место проведения встречи
+                <input class="input_s" type="text" name="meeting_place" required>
+            </label>
+        </div>
+
+        <!-- Фото -->
+        <div style="padding-top: 6px">
+            <label>Фотоотчет (минимум 2 файла)
+                <input type="file" name="photos[]" multiple accept="image/*" required>
+            </label>
+        </div>
+
+        <!-- Сохранить -->
+        <div style="padding-top: 12px">
+            <button type="submit">Сохранить</button>
+        </div>
+    </form>
+</div>
+
+<!-- <script type="module" id="pageScript" data-page="base_pension" src="static/js/main.js"></script> -->
+{% endblock %}

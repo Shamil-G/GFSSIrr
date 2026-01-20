@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <!--<link rel="stylesheet" type="text/css" href="/static/common_style/main.css">-->
+    {% block link_style %}{% endblock %}
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    <title>{% block title %}{% endblock %}</title>
+    {% block javascript %}{% endblock %}
+</head>
+<body>
+
+    <div id="global-modal-layer"></div>
+
+    <common-container>
+        <header id="scenario_FilterZone">
+            <header-l style="font-size:20px">
+                <img class="img-logo" src="/static/img/logo-g.ico"><a>&emsp;{{ res_value('APP_NAME') }},</a>
+            </header-l>
+
+            <header-c>
+                <!--<a class="nav_button" style="margin-left: 16px; padding: 6px 24px" href="https://tolem.gfss.kz">Tolem</a>-->
+                <a class="nav_button" style="margin-left: 16px; padding: 6px 24px" href="http://qyzmetker:80">Qyzmetker</a>
+            </header-c>
+            <header-r>
+                <div>
+                    <a href="#" onclick="toggleTheme()">
+                        <img class="img-style"
+                             id="theme-icon"
+                             src="/static/img/dark-icon.png"
+                             style="width: 24px; height: 24px; border-radius: 18px; margin: 2px 2px; vertical-align: middle;" />
+                    </a>
+                </div>
+                {% if session['language'] == 'ru' %}
+                <a class="nav_button" style="margin-left: 16px; padding: 6px 24px; min-width: 74px" href="/language/kz">ҚАЗ</a>
+                {% else %}
+                <a class="nav_button" style="margin-left: 16px; padding: 6px 24px; min-width: 74px" href="/language/ru">РУС</a>
+                {% endif %}
+            </header-r>
+            <!--<script type="module" id="pageBaseScript" data-page="main_page" src="/static/js/base.js" defer></script>-->
+        </header>
+
+        <nav>
+            {% if g.user.is_authenticated %}
+                <a class="nav_button" href="/meet_labor">{{ res_value('MEET_LABOR') }}</a>
+                <a class="nav_button" href="/meet_population">{{ res_value('MEET_POPULATION') }}</a>
+                <a class="nav_button" href="/logout">{{ res_value('LOGOUT_BUTTON') }}</a>
+            {% else %}
+                <a class="nav_button" href="/login">{{ res_value('LOGIN_BUTTON') }}</a>
+            {% endif %}
+            <p></p>
+        </nav>
+
+        <article_title>
+            {% block main_title %}{% endblock %}
+        </article_title>
+        <article>
+            {% block body %}{% endblock %}
+        </article>
+
+        <footer>
+            <footer-l>
+                <small>© 2021</small>
+            </footer-l>
+            <footer-r>
+                <small style="visibility: hidden">{{ res_value('CREATORS') }}</small>
+                <small style="visibility: hidden">{{ res_value('FOR_DEVELOPERS') }}</small>
+                <a style="font-size:14px">{% if g.user.is_authenticated %} {{ g.user.full_name }} {% endif %}</a>
+            </footer-r>
+        </footer>
+    </common-container>
+    <script>
+        const html = document.documentElement;
+        // Загружаем сохранённую тему
+        const saved_color = localStorage.getItem("theme");
+        if (!saved_color) saved_color = 'color';
+
+        html.dataset.theme = saved_color;
+
+        document.getElementById("theme-icon").src =
+            saved_color === "dark"
+                ? "/static/img/color-icon.png"
+                : "/static/img/dark-icon.png";
+
+        function toggleTheme() {
+            const newTheme = html.dataset.theme === "dark" ? "color" : "dark";
+            html.dataset.theme = newTheme;
+            localStorage.setItem("theme", newTheme);
+
+            document.getElementById("theme-icon").src =
+                newTheme === "dark"
+                    ? "/static/img/color-icon.png"
+                    : "/static/img/dark-icon.png";
+        }
+    </script>
+</body>
+</html>
