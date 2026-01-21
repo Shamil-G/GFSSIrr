@@ -16,112 +16,89 @@
 {% block body %}
 
 <div id="irr-labor-form">
-  <form>
+    <form class="irr-form">
 
-      <!-- Дата -->
-      <div style="padding-top: 6px">
-        <label>{{ res_value('MEET_DATE') }}
-            <input class="input_d" style="margin-left: 12px; max-width: 132px" type="date" name="meet_date" required>
-        </label>
-      </div>
+        <div class="form-row">
+            <label>{{ res_value('MEET_DATE') }}</label>
+            <input class="input_d" style="max-width: 124px" type="date" name="meet_date" required>
+        </div>
 
-      <!-- Регион -->
-      <div style="padding-top: 6px">
-        <label>Регион</label>
-        <select class="input_s" name="region" required>
-          <option value="">Выберите регион</option>
-        </select>
-      </div>
+        <div class="form-row">
+            <label>Регион</label>
+            <select class="input_s" name="region" required>
+                <option value="">{{ res_value('SELECT_REGION') }}</option>
+            </select>
+        </div>
 
-      <!-- Район -->
-      <div style="padding-top: 6px">
-        <label>Район</label>
-        <select class="input_s" name="district" required>
-          <option value="">Выберите район</option>
-        </select>
-      </div>
+        <div class="form-row">
+            <label>Район</label>
+            <select class="input_s" name="district" required>
+                <option value="">{{ res_value('SELECT_RAYON') }}</option>
+            </select>
+        </div>
 
-      <!-- Количество участников -->
-      <div style="padding-top: 6px">
-        <label>Количество участников
+        <div class="form-row">
+            <label>{{ res_value('COUNT_PARTICIPIENT') }}</label>
             <input class="input_s" style="max-width: 80px" type="number" name="participants_total" min="1" required>
-        </label>
-      </div>
+        </div>
 
-      <!-- Количество женщин -->
-      <div style="padding-top: 6px">
-        <label>Количество женщин
+        <div class="form-row">
+            <label>{{ res_value('COUNT_WOMEN') }}</label>
             <input class="input_s" style="max-width: 80px" type="number" name="participants_women" min="0" required>
-        </label>
-      </div>
+        </div>
 
-      <!-- Спикер -->
-      <div style="padding-top: 6px">
-        <label>ФИО спикера
+        <div class="form-row">
+            <label>{{ res_value('SPEAKER_FIO') }}</label>
             <input class="input_s" type="text" name="speaker_fio" list="speakers" required>
-        </label>
-        <datalist id="speakers">
-          <!-- наполняется из БД -->
-        </datalist>
-      </div>
+            <datalist id="speakers"></datalist>
+        </div>
 
-      <!-- Формат встречи -->
-      <div style="padding-top: 6px">
-        <label>Формат встречи</label>
-        <select class="input_s" style="max-width: 170px" name="meeting_format" required>
-          <option value="">Выберите формат</option>
-          <option value="offline">На месте</option>
-          <option value="online">Онлайн</option>
-        </select>
-      </div>
+        <div class="form-row">
+            <label>{{ res_value('MEETING_FORMAT') }}</label>
+            <select class="input_s" style="max-width: 170px" name="meeting_format" required>
+                <option value="">{{ res_value('SELECT_FORMAT') }}</option>
+                <option value="offline">{{ res_value('ON_PLACE_FORMAT') }}</option>
+                <option value="online">{{ res_value('ON_LINE_FORMAT') }}</option>
+            </select>
+        </div>
 
-      <!-- Совместные организации -->
-      <div style="padding-top: 6px">
-        <label>Организация (совместно)</label>
-        <select name="partners[]" multiple>
-          <option value="self">Проведено самостоятельно</option>
-        </select>
-        <small>Для выбора нескольких удерживайте Ctrl</small>
-      </div>
+        <div class="form-row">
+            <label>{{ res_value('NAME_PARTNERS') }}</label>
+            <select name="partners[]" multiple>
+                <option value="self">Проведено самостоятельно</option>
+            </select>
+        </div>
 
-      <!-- БИН -->
-      <div style="padding-top: 6px">
-        <label>БИН организации
-            <input class="input_s" type="text" name="bin" maxlength="12" required>
-        </label>
-      </div>
+        <div class="form-row">
+            <label>{{ res_value('CATEGORY_SUBJECT') }}</label>
+            <select class="input_s"  style="max-width: 188px" name="business_category" required>
+                <option value="">{{ res_value('CATEGORY_SELECT') }}</option>
+                <option value="large">{{ res_value('CATEGORY_LARGE') }}</option>
+                <option value="medium">{{ res_value('CATEGORY_MIDDLE') }}</option>
+                <option value="small">{{ res_value('CATEGORY_SMALL') }}</option>
+            </select>
+        </div>
 
-      <!-- Наименование организации -->
-      <div style="padding-top: 6px">
-        <label>Наименование организации
-        <input class="input_s" type="text" name="organization_name" readonly>
-        </label>
-      </div>
+        <div class="form-row">
+            <label>{{ res_value('BIN_ORGANIZATION') }}</label>
+            <input class="input_s" style="max-width: 140px" type="number" name="bin" maxlength="12" required>
+        </div>
 
-      <!-- Категория -->
-      <div style="padding-top: 6px">
-        <label>Категория субъекта предпринимательства</label>
-        <select class="input_s" style="max-width: 184px" name="business_category" required>
-          <option value="">Выберите категорию</option>
-          <option value="large">Крупный</option>
-          <option value="medium">Средний</option>
-          <option value="small">Малый</option>
-        </select>
-      </div>
-
-      <!-- Фото -->
-      <div style="padding-top: 6px">
-        <label>Фотоотчет (минимум 2 файла)
+        <div class="form-row">
+            <label>{{ res_value('NAME_ORGANIZATION') }}</label>
+            <input class="input_s" style="min-width: 720px" type="text" name="organization_name" readonly>
+        </div>
+        
+        <div class="form-row">
+            <label>{{ res_value('PHOTO_REPORT') }}</label>
             <input type="file" name="photos[]" multiple accept="image/*" required>
-        </label>
-      </div>
+        </div>
 
-      <!-- Сохранить -->
-      <div style="padding-top: 12px">
-        <button type="submit">Сохранить</button>
-      </div>
+        <div class="form-row form-actions">
+            <button type="submit">{{ res_value('BUTTON_SAVE') }}</button>
+        </div>
 
-  </form>
+    </form>
 </div>
 <!-- <script type="module" id="pageScript" data-page="base_pension" src="static/js/main.js"></script> -->
 {% endblock %}

@@ -575,6 +575,33 @@ form {
     border: 1px solid rgba(0, 47, 189, 0.15);
     /* padding: 4px 12px 4px 12px; */
 }
+.irr-form {
+    display: grid;
+    grid-template-columns: 210px 1fr;
+    row-gap: 8px;
+    column-gap: 12px;
+    align-items: center;
+}
+
+.form-row {
+    display: contents;
+}
+
+    .form-row label {
+        text-align: left; /* ← ключевое */
+        white-space: nowrap;
+    }
+
+    .form-row input,
+    .form-row select {
+        max-width: 320px;
+    }
+
+.form-actions {
+    grid-column: 2;
+    padding-top: 12px;
+}
+
 .input_s, .input_d, .input_s_form {
     padding: 8px;
     font-size: 15px;
