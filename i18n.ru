@@ -42,8 +42,10 @@ CATEGORY_SMALL=Малый
 NAME_ORGANIZATION=Наименование организации
 BIN_ORGANIZATION=БИН организации
 PHOTO_REPORT=Фотоотчет
+PHOTO_SELECT=Выберите файлы
 BUTTON_SAVE=Сохранить
 NAME_PARTNERS=Организация (совместно)
+SELF_MEETING=Проведено самостоятельно
 
 ID_CALC=Ид расчета
 INSERT_NICKNAME=Введите зарегистрированное имя

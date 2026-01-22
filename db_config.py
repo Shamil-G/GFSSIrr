@@ -6,11 +6,11 @@ if platform == 'unix':
     pool_inc = 4
 else:
     pool_min = 1
-    pool_max = 4
+    pool_max = 40
     pool_inc = 1
 
-username = 'irr'
-password = 'irr'
+username = 'aktuar'
+password = 'aktuar'
 host = '192.168.20.60'
 port = 1521
 service = 'gfssdb.gfss.kz'

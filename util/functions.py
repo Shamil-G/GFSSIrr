@@ -1,7 +1,10 @@
 ﻿from flask import request
 import json
 from util.logger import log
-
+import os
+from werkzeug.utils import secure_filename
+from datetime import datetime
+from app_config import UPLOAD_DIR
 
 def extract_payload():
     if request.method == 'GET':
@@ -30,30 +33,20 @@ def extract_payload():
         except Exception:
             return {}
 
-def get_scenario(name):
-    scenario = ''
-    log.info(f'GET SCENARIO: {name}')
-    match name:
-        case 'work': scenario='Рабочий'
-        case 'real': scenario='Реалистичный'
-        case 'optim': scenario='Оптимистичный'
-        case 'pessimistic': scenario='Пессимистичный'
-    return scenario
 
+def upload_files(rfbn_id, files):
+    yr = datetime.now().year
+    UPLOAD_PATH = f"{UPLOAD_DIR}/{yr}/{rfbn_id}"
 
-def to_decimal(value):
-    if value is None:
-        return None
+    os.makedirs(UPLOAD_PATH, exist_ok=True)
 
-    s = str(value).strip()
+    # files = files.getlist("photo_report")
+    list_path = {}
+    for n, f in enumerate(files):
+        if f.filename:
+            filename = secure_filename(f.filename)
+            path = os.path.join(UPLOAD_PATH, filename)
+            list_path[n] = path
+            f.save(path)
+    return list_path
 
-    if s == "":
-        return None
-
-    # убираем пробелы и заменяем запятую на точку
-    s = s.replace(" ", "").replace(",", ".")
-
-    try:
-        return Decimal(s)
-    except Exception:
-        return None

@@ -725,3 +725,8 @@ thead th {
 .has-helper:hover .help-icon {
     opacity: 1;
 }
+.file-list {
+    margin: 6px 0px;
+    padding-left: 0;
+    list-style-position: inside;
+}

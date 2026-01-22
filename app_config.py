@@ -3,7 +3,7 @@ from configparser import ConfigParser
 
 styles = ['color','dark']
 
-port=5081
+port=5099
 host='localhost'
 LOG_PATH = "logs"
 #URL_LOGIN = 'http://192.168.1.34:8000'
@@ -11,10 +11,11 @@ LOAD_PATH = './loads/'
 src_lang = 'file'
 language = 'ru'
 REPORT_PATH='reports/'
+UPLOAD_DIR='uploads'
 
 socketio_client_version = "4.7.2"
 
-deps = ['Проектный офис']
+deps = ['Департамент информационных технологий и технического обеспечения']
 
 admin_deps = ['Департамент актуарных расчетов',
               'Департамент информационных технологий и технического обеспечения']

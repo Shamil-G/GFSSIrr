@@ -8,97 +8,112 @@
     <span style="font-weight: bold">{{ res_value('MEET_LABOR') }}</span>
 {% endblock %}
 
-{% block link_style %}
-<!--<link rel="stylesheet" type="text/css" href="/static/common_style/filters.css">
-<link rel="stylesheet" type="text/css" href="/static/{{session['style']}}/filters.css">-->
-{% endblock %}
-
 {% block body %}
 
 <div id="irr-labor-form">
-    <form class="irr-form">
+    <form class="irr-form" method="post" enctype="multipart/form-data">
 
         <div class="form-row">
             <label>{{ res_value('MEET_DATE') }}</label>
-            <input class="input_d" style="max-width: 124px" type="date" name="meet_date" required>
+            <input class="input_d" style="max-width: 124px" type="date" name="meet_date" value="{{ data.meet_date }}" required>
         </div>
 
         <div class="form-row">
-            <label>Регион</label>
-            <select class="input_s" name="region" required>
-                <option value="">{{ res_value('SELECT_REGION') }}</option>
+            <label for="region-select">{{ res_value('SELECT_REGION') }}</label>
+            <select id="region-select" class="input_s" style="min-width: 274px" name="region" value="{{ data.region }}" required>
+                {% for code, region in regions.items() %}
+                    <option value="{{ code }}" 
+                            {% if code == data.region %}selected{% endif %}> {{ region.legacy_name }} 
+                    </option> 
+                {% endfor %}
             </select>
         </div>
 
         <div class="form-row">
-            <label>Район</label>
-            <select class="input_s" name="district" required>
-                <option value="">{{ res_value('SELECT_RAYON') }}</option>
-            </select>
+            <label for="district-select">{{ res_value('SELECT_RAYON') }}</label>
+            <select id="district-select" style="min-width: 444px" class="input_s" name="district" value="{{ data.district }}" required></select>
         </div>
 
         <div class="form-row">
-            <label>{{ res_value('COUNT_PARTICIPIENT') }}</label>
-            <input class="input_s" style="max-width: 80px" type="number" name="participants_total" min="1" required>
+            <label for="count-participient">{{ res_value('COUNT_PARTICIPIENT') }}</label>
+            <input id="count-participient" class="input_s" style="max-width: 80px" type="number" name="participants_total" min="1" value="{{ data.participants_total }}" required>
         </div>
 
         <div class="form-row">
-            <label>{{ res_value('COUNT_WOMEN') }}</label>
-            <input class="input_s" style="max-width: 80px" type="number" name="participants_women" min="0" required>
+            <label for="count-women">{{ res_value('COUNT_WOMEN') }}</label>
+            <input id="count-women" class="input_s" style="max-width: 80px" type="number" name="participants_women" min="0" value="{{ data.participants_women }}" required>
         </div>
 
         <div class="form-row">
-            <label>{{ res_value('SPEAKER_FIO') }}</label>
-            <input class="input_s" type="text" name="speaker_fio" list="speakers" required>
-            <datalist id="speakers"></datalist>
+            <label for="speaker-fio">{{ res_value('SPEAKER_FIO') }}</label>
+            <input id="speaker-fio" class="input_s" type="text" name="speaker_fio" list="speakers" value="{{ data.speaker_fio }}" required>
         </div>
 
         <div class="form-row">
-            <label>{{ res_value('MEETING_FORMAT') }}</label>
-            <select class="input_s" style="max-width: 170px" name="meeting_format" required>
+            <label for="meeting-format">{{ res_value('MEETING_FORMAT') }}</label>
+            <select id="meeting-format" class="input_s" style="max-width: 170px" name="meeting_format" value="{{ data.meeting_format }}" required>
                 <option value="">{{ res_value('SELECT_FORMAT') }}</option>
-                <option value="offline">{{ res_value('ON_PLACE_FORMAT') }}</option>
-                <option value="online">{{ res_value('ON_LINE_FORMAT') }}</option>
+                <option value="offline" {% if data.meeting_format == "offline" %}selected{% endif %}>{{ res_value('ON_PLACE_FORMAT') }}</option>
+                <option value="online" {% if data.meeting_format == "online" %}selected{% endif %}>{{ res_value('ON_LINE_FORMAT') }}</option>
             </select>
         </div>
 
         <div class="form-row">
             <label>{{ res_value('NAME_PARTNERS') }}</label>
-            <select name="partners[]" multiple>
-                <option value="self">Проведено самостоятельно</option>
-            </select>
+            <div>
+            <label>
+                <input type="checkbox" name="partners" value="self"
+                    {% if "self" in data.partners %}checked{% endif %}>
+                {{ res_value('SELF_MEETING') }}
+            </label>
+
+            <label>
+                <input type="checkbox" name="partners" value="MinTrud"
+                    {% if "MinTrud" in data.partners %}checked{% endif %}>
+                {{ res_value('SELF_MEETING_2') }}
+            </label>
+            </div>
         </div>
 
+
         <div class="form-row">
-            <label>{{ res_value('CATEGORY_SUBJECT') }}</label>
-            <select class="input_s"  style="max-width: 188px" name="business_category" required>
+            <label for="category-subject">{{ res_value('CATEGORY_SUBJECT') }}</label>
+            <select id="category-subject" class="input_s"  style="max-width: 188px" name="business_category" required>
                 <option value="">{{ res_value('CATEGORY_SELECT') }}</option>
-                <option value="large">{{ res_value('CATEGORY_LARGE') }}</option>
-                <option value="medium">{{ res_value('CATEGORY_MIDDLE') }}</option>
-                <option value="small">{{ res_value('CATEGORY_SMALL') }}</option>
+                <option value="large" {% if "large" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_LARGE') }}</option>
+                <option value="medium" {% if "medium" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_MIDDLE') }}</option>
+                <option value="small" {% if "small" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_SMALL') }}</option>
             </select>
         </div>
 
         <div class="form-row">
-            <label>{{ res_value('BIN_ORGANIZATION') }}</label>
-            <input class="input_s" style="max-width: 140px" type="number" name="bin" maxlength="12" required>
+            <label for="bin-organization">{{ res_value('BIN_ORGANIZATION') }}</label>
+            <input id="bin-organization" class="input_s" style="max-width: 140px" type="number" name="bin" maxlength="12" required value="{{ data.bin }}">
         </div>
 
         <div class="form-row">
-            <label>{{ res_value('NAME_ORGANIZATION') }}</label>
-            <input class="input_s" style="min-width: 720px" type="text" name="organization_name" readonly>
+            <label for="name-organization">{{ res_value('NAME_ORGANIZATION') }}</label>
+            <input id="name-organization" class="input_s" style="min-width: 720px" type="text" name="organization_name" value="{{ data.organization_name }}">
         </div>
         
         <div class="form-row">
-            <label>{{ res_value('PHOTO_REPORT') }}</label>
-            <input type="file" name="photos[]" multiple accept="image/*" required>
+            <span>{{ res_value('PHOTO_REPORT') }}</span>
+            <div style="display: flex; flex-direction: column; gap: 6px">
+                <label for="photo-report" class="button" style="max-width: 220px">
+                    📷 {{ res_value('PHOTO_SELECT') }}
+                </label>
+                <input type="file" id="photo-report" name="photo_report" accept="image/*" multiple hidden>
+                <div id="photo-file-names" class="file-names"></div>
+            </div>
         </div>
 
         <div class="form-row form-actions">
             <button type="submit">{{ res_value('BUTTON_SAVE') }}</button>
+            <h4>{{ message }}</h4>
         </div>
 
     </form>
 </div>
-<!-- <script type="module" id="pageScript" data-page="base_pension" src="static/js/main.js"></script> -->
+<script> window.DISTRICTS = {{ districts | tojson }}; </script>
+<script type="module" data-page="base_pension" src="/static/js/meet_labor.js"></script>
 {% endblock %}
