@@ -3,7 +3,9 @@ from flask_login import login_required
 from main_app import app, log
 from util.functions import upload_files
 from regions import regions
-from model.functions import get_list_rayons
+from model.functions import get_list_rayons, get_partners
+from view.common_route import get_cached_rayons
+
 
 @app.route('/meet_population', methods=['GET', 'POST'])
 @login_required
@@ -11,6 +13,7 @@ def view_meet_poulation_pension():
     list_regions=[]
     message=''
     data={}
+    list_partners=get_partners()
 
     if request.method == 'POST':
         data = dict(request.form)
@@ -27,16 +30,22 @@ def view_meet_poulation_pension():
         meeting_place = data.get('meeting_place','')
         photos = files.getlist("photo_report")
 
+        if len(partners)<1:
+            message="Необходимо выбрать не менее чем одну организацию"
         if len(photos) < 2: 
+            message=f"{message}{'\n' if message else ''}\nНеобходимо выбрать не менее 2 файлов"
+
+        if len(message)>0:
             data["partners"] = partners
-            message="Нужно загрузить минимум 2 файла"
+            
             if g.user.top_control==0:
                 list_regions = { g.user.rfbn_id: regions[g.user.rfbn_id] }
             else:
                 list_regions=regions
 
-            list_rayons=get_list_rayons(g.user.rfbn_id)
-            return render_template('meet_labor.html', regions=list_regions, districts=list_rayons, top=g.user.top_control, message=message, data=data)
+            list_rayons = get_cached_rayons(g.user.rfbn_id)
+
+            return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_control, message=message, list_partners=list_partners, data=data)
         else:
             log.info(f'POST. MEET LABOR\n\tdata: {data}')
             log.info(f'POST. MEET LABOR\n\tmeet_date: {meet_date}\n\tregion: {region}\n\tdistrict: {district}\n\tparticipants_total: {participants_total}')
@@ -53,7 +62,7 @@ def view_meet_poulation_pension():
     else:
         list_regions=regions
 
-    list_rayons=get_list_rayons(g.user.rfbn_id)
+    list_rayons = get_cached_rayons(g.user.rfbn_id)
 
     # log.info(f"------->\n\tVIEW MEET POPULATION\n\tRFBN_ID: {g.user.rfbn_id}\n\tTOP_CONTROL: {g.user.top_control}\n<-------")
-    return render_template('meet_labor.html', regions=list_regions, districts=list_rayons, top=g.user.top_control, message=message, data=data)
+    return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_control, message=message, list_partners=list_partners, data=data)

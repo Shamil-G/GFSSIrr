@@ -15,23 +15,26 @@
 
         <div class="form-row">
             <label>{{ res_value('MEET_DATE') }}</label>
-            <input class="input_d" style="max-width: 124px" type="date" name="meet_date" value="{{ data.meet_date }}" required>
+            <input class="input_d" style="max-width: 132px" type="date" name="meet_date" value="{{ data.meet_date }}" required>
         </div>
 
         <div class="form-row">
             <label for="region-select">{{ res_value('SELECT_REGION') }}</label>
             <select id="region-select" class="input_s" style="min-width: 274px" name="region" value="{{ data.region }}" required>
                 {% for code, region in regions.items() %}
-                    <option value="{{ code }}" 
-                            {% if code == data.region %}selected{% endif %}> {{ region.legacy_name }} 
-                    </option> 
+                <option value="{{ code }}"
+                        {% if code in data.region %}selected{% endif %}>
+                    {{ region.legacy_name }}
+                </option>
                 {% endfor %}
             </select>
         </div>
 
         <div class="form-row">
             <label for="district-select">{{ res_value('SELECT_RAYON') }}</label>
-            <select id="district-select" style="min-width: 444px" class="input_s" name="district" value="{{ data.district }}" required></select>
+            <select id="district-select" name="district" style="min-width: 444px" class="input_s hidden" required>
+                <option value="{{ data.district }}" selected hidden></option>
+            </select>
         </div>
 
         <div class="form-row">
@@ -53,32 +56,27 @@
             <label for="meeting-format">{{ res_value('MEETING_FORMAT') }}</label>
             <select id="meeting-format" class="input_s" style="max-width: 170px" name="meeting_format" value="{{ data.meeting_format }}" required>
                 <option value="">{{ res_value('SELECT_FORMAT') }}</option>
-                <option value="offline" {% if data.meeting_format == "offline" %}selected{% endif %}>{{ res_value('ON_PLACE_FORMAT') }}</option>
-                <option value="online" {% if data.meeting_format == "online" %}selected{% endif %}>{{ res_value('ON_LINE_FORMAT') }}</option>
+                <option value="offline" {% if "offline" in data.meeting_format %}selected{% endif %}>{{ res_value('ON_PLACE_FORMAT') }}</option>
+                <option value="online" {% if "online" in data.meeting_format %}selected{% endif %}>{{ res_value('ON_LINE_FORMAT') }}</option>
             </select>
         </div>
 
         <div class="form-row">
             <label>{{ res_value('NAME_PARTNERS') }}</label>
-            <div>
-            <label>
-                <input type="checkbox" name="partners" value="self"
-                    {% if "self" in data.partners %}checked{% endif %}>
-                {{ res_value('SELF_MEETING') }}
-            </label>
-
-            <label>
-                <input type="checkbox" name="partners" value="MinTrud"
-                    {% if "MinTrud" in data.partners %}checked{% endif %}>
-                {{ res_value('SELF_MEETING_2') }}
-            </label>
+            <div style="display: flex; flex-direction: column; gap: 6px; border: 1px solid; max-width: 720px">
+                {% for code, partner in list_partners.items() %}
+                <label>
+                    <input type="checkbox" name="partners" value={{code}}
+                           {% if code in data.partners %}checked{% endif %}>
+                    {{ partner }}
+                </label>
+                {% endfor %}
             </div>
         </div>
 
-
         <div class="form-row">
             <label for="category-subject">{{ res_value('CATEGORY_SUBJECT') }}</label>
-            <select id="category-subject" class="input_s"  style="max-width: 188px" name="business_category" required>
+            <select id="category-subject" class="input_s" style="max-width: 188px" name="business_category" required>
                 <option value="">{{ res_value('CATEGORY_SELECT') }}</option>
                 <option value="large" {% if "large" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_LARGE') }}</option>
                 <option value="medium" {% if "medium" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_MIDDLE') }}</option>
@@ -88,14 +86,15 @@
 
         <div class="form-row">
             <label for="bin-organization">{{ res_value('BIN_ORGANIZATION') }}</label>
-            <input id="bin-organization" class="input_s" style="max-width: 140px" type="number" name="bin" maxlength="12" required value="{{ data.bin }}">
+            <input id="bin-organization" class="input_s" style="max-width: 140px" name="bin"
+                   type="text" maxlength="12" pattern="\d{12}" inputmode="numeric" title="Введите ровно 12 цифр" oninput="this.value = this.value.replace(/\D/g, '')" required value="{{ data.bin }}">
         </div>
 
         <div class="form-row">
             <label for="name-organization">{{ res_value('NAME_ORGANIZATION') }}</label>
-            <input id="name-organization" class="input_s" style="min-width: 720px" type="text" name="organization_name" value="{{ data.organization_name }}">
+            <input id="name-organization" class="input_s" type="text" name="organization_name" style="background: transparent; border: none; outline: none; box-shadow: none;" value="{{ data.organization_name }}">
         </div>
-        
+
         <div class="form-row">
             <span>{{ res_value('PHOTO_REPORT') }}</span>
             <div style="display: flex; flex-direction: column; gap: 6px">
@@ -109,7 +108,7 @@
 
         <div class="form-row form-actions">
             <button type="submit">{{ res_value('BUTTON_SAVE') }}</button>
-            <h4>{{ message }}</h4>
+            <span style="white-space: pre-line; padding: 0px; margin: 0px; font-weight: bold; font-size: 14px; line-height: 0.8; color: green">{{ message }}</span>
         </div>
 
     </form>

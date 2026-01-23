@@ -15,7 +15,7 @@
 
         <div class="form-row">
             <label>{{ res_value('MEET_DATE') }}</label>
-            <input class="input_d" style="max-width: 124px" type="date" name="meet_date" value="{{ data.meet_date }}" required>
+            <input class="input_d" style="max-width: 132px" type="date" name="meet_date" value="{{ data.meet_date }}" required>
         </div>
 
         <div class="form-row">
@@ -23,7 +23,7 @@
             <select id="region-select" class="input_s" style="min-width: 274px" name="region" value="{{ data.region }}" required>
                 {% for code, region in regions.items() %}
                 <option value="{{ code }}"
-                        {% if code == data.region %}selected{% endif %}>
+                        {% if code in data.region %}selected{% endif %}>
                     {{ region.legacy_name }}
                 </option>
                 {% endfor %}
@@ -32,7 +32,9 @@
 
         <div class="form-row">
             <label for="district-select">{{ res_value('SELECT_RAYON') }}</label>
-            <select id="district-select" style="min-width: 444px" class="input_s" name="district" required></select>
+            <select id="district-select" name="district" style="min-width: 444px" class="input_s hidden" required>
+                <option value="{{ data.district }}" selected hidden></option>
+            </select>
         </div>
 
         <div class="form-row">
@@ -61,18 +63,14 @@
 
         <div class="form-row">
             <label>{{ res_value('NAME_PARTNERS') }}</label>
-            <div>
+            <div style="display: flex; flex-direction: column; gap: 6px; border: 1px solid; max-width: 720px">
+                {% for code, partner in list_partners.items() %}
                 <label>
-                    <input type="checkbox" name="partners" value="self"
-                           {% if "self" in data.partners %}checked{% endif %}>
-                    {{ res_value('SELF_MEETING') }}
+                    <input type="checkbox" name="partners" value={{code}}
+                           {% if code in data.partners %}checked{% endif %}>
+                    {{ partner }}
                 </label>
-
-                <label>
-                    <input type="checkbox" name="partners" value="MinTrud"
-                           {% if "MinTrud" in data.partners %}checked{% endif %}>
-                    {{ res_value('SELF_MEETING_2') }}
-                </label>
+                {% endfor %}
             </div>
         </div>
 
@@ -94,7 +92,7 @@
 
         <div class="form-row form-actions">
             <button type="submit">{{ res_value('BUTTON_SAVE') }}</button>
-            <h4>{{ message }}</h4>
+            <pre style="white-space: pre-line; padding: 0px; margin: 0px; font-weight: bold; font-size: 14px; line-height: 0.8; color: green">{{ message }}</pre>
         </div>
 
     </form>

@@ -49,4 +49,3 @@ def upload_files(rfbn_id, files):
             list_path[n] = path
             f.save(path)
     return list_path
-

@@ -730,3 +730,6 @@ thead th {
     padding-left: 0;
     list-style-position: inside;
 }
+.hidden {
+    visibility: hidden;
+}

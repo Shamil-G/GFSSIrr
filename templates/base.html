@@ -8,11 +8,19 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
+    <script>
+        (function () {
+            const theme = localStorage.getItem("theme") || "color";
+            document.documentElement.dataset.theme = theme;
+        })();
+    </script>
+
+    {% block javascript %}{% endblock %}
+
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
     <title>{% block title %}{% endblock %}</title>
-    {% block javascript %}{% endblock %}
 </head>
 <body>
 
@@ -75,29 +83,6 @@
             </footer-r>
         </footer>
     </common-container>
-    <script>
-        const html = document.documentElement;
-        // Загружаем сохранённую тему
-        const saved_color = localStorage.getItem("theme");
-        if (!saved_color) saved_color = 'color';
 
-        html.dataset.theme = saved_color;
-
-        document.getElementById("theme-icon").src =
-            saved_color === "dark"
-                ? "/static/img/color-icon.png"
-                : "/static/img/dark-icon.png";
-
-        function toggleTheme() {
-            const newTheme = html.dataset.theme === "dark" ? "color" : "dark";
-            html.dataset.theme = newTheme;
-            localStorage.setItem("theme", newTheme);
-
-            document.getElementById("theme-icon").src =
-                newTheme === "dark"
-                    ? "/static/img/color-icon.png"
-                    : "/static/img/dark-icon.png";
-        }
-    </script>
 </body>
 </html>

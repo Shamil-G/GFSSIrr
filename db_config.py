@@ -9,8 +9,8 @@ else:
     pool_max = 40
     pool_inc = 1
 
-username = 'aktuar'
-password = 'aktuar'
+username = 'irr'
+password = 'irr'
 host = '192.168.20.60'
 port = 1521
 service = 'gfssdb.gfss.kz'

@@ -11,6 +11,7 @@ from util.ip_addr import ip_addr
 # from view.routes_overpayments import *
 from view.meet_labor_route import *
 from view.meet_population_route import *
+from view.common_route import *
 
 from util.functions import extract_payload
 
@@ -88,4 +89,3 @@ def set_language(lang):
         return redirect(current_page)
     else:
         return redirect(url_for('view_root'))
-
