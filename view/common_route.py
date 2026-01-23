@@ -20,4 +20,3 @@ def get_cached_rayons(rfbn_id: str):
     log.info(f"--->\nGET CACHED RAYONS for {rfbn_id}\n<---")
     rayons = get_list_rayons(rfbn_id) or {}
     return {str(k): str(v) for k, v in rayons.items()}
-

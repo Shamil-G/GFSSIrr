@@ -3,8 +3,9 @@ from flask_login import login_required
 from main_app import app, log
 from util.functions import upload_files
 from regions import regions
-from model.functions import get_list_rayons, get_partners
+from model.functions import get_list_rayons, get_partners, add_protocol
 from view.common_route import get_cached_rayons
+import json
 
 
 @app.route('/meet_population', methods=['GET', 'POST'])
@@ -19,15 +20,15 @@ def view_meet_poulation_pension():
         data = dict(request.form)
         files = request.files
         
-        meet_date = data.get('meet_date','')
+        # meet_date = data.get('meet_date','')
         region = data.get('region','')
-        district = data.get('district','')
-        participants_total = data.get('participants_total','')
-        participants_women = data.get('participants_women','')
-        speaker_fio = data.get('speaker_fio','')
-        meeting_format = data.get('meeting_format','')
+        # district = data.get('district','')
+        # participants_total = data.get('participants_total','')
+        # participants_women = data.get('participants_women','')
+        # speaker_fio = data.get('speaker_fio','')
+        # meeting_format = data.get('meeting_format','')
         partners = request.form.getlist('partners')
-        meeting_place = data.get('meeting_place','')
+        # meeting_place = data.get('meeting_place','')
         photos = files.getlist("photo_report")
 
         if len(partners)<1:
@@ -47,14 +48,20 @@ def view_meet_poulation_pension():
 
             return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_control, message=message, list_partners=list_partners, data=data)
         else:
-            log.info(f'POST. MEET LABOR\n\tdata: {data}')
-            log.info(f'POST. MEET LABOR\n\tmeet_date: {meet_date}\n\tregion: {region}\n\tdistrict: {district}\n\tparticipants_total: {participants_total}')
-            log.info(f'POST. MEET LABOR\n\tparticipants_women: {participants_women}\n\tspeaker-fio: {speaker_fio}\n\tmeeting_format: {meeting_format}')
-            log.info(f'POST. MEET LABOR\n\tmeeting-partners: {partners}\n\meeting_place: {meeting_place}')
+            # log.info(f'POST. MEET LABOR\n\tdata: {data}')
+            # log.info(f'POST. MEET LABOR\n\tmeet_date: {meet_date}\n\tregion: {region}\n\tdistrict: {district}\n\tparticipants_total: {participants_total}')
+            # log.info(f'POST. MEET LABOR\n\tparticipants_women: {participants_women}\n\tspeaker-fio: {speaker_fio}\n\tmeeting_format: {meeting_format}')
+            # log.info(f'POST. MEET LABOR\n\tmeeting-partners: {partners}\n\meeting_place: {meeting_place}')
 
             list_path=upload_files(region, photos)
-            log.info(f'POST. MEET LABOR\n\tList_files_path: {list_path}')
 
+            data['photo_path'] = json.dumps(list_path, ensure_ascii=False)
+            data['partners'] = json.dumps(partners, ensure_ascii=False)
+            data['employee'] = g.user.fio            
+
+            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['photo_path']}\n\tpartners: {data['partners']}')
+
+            add_protocol(data)
 
     # rows, columns = get_solidary_items(scenario)
     if g.user.top_control==0:

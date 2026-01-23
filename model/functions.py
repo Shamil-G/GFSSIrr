@@ -1,5 +1,6 @@
-from db.connect import get_connection, select_one
+from db.connect import get_connection, select_one, plsql_execute_s
 from main_app   import log
+from datetime import datetime
 
 
 def get_list_rayons(rfbn_id):
@@ -55,3 +56,22 @@ def get_org_name(bin: str)->str:
         return {'name': ''}
     return {'name': rec}
 
+
+def add_protocol(data: dict):
+    cmd="""
+    begin manage.add_protocol(:meet_date, :region, :district, :participants_total, 
+                                :participants_women, :bin, :meeting_format,
+                                :business_category, :partners, :speaker_fio, :employee,
+                                :meeting_place, :photo_path); end;
+    """
+
+    if 'bin' not in data:
+        data['bin']=''
+    if 'business_category' not in data:
+        data['business_category']=''
+    if 'meeting_place' not in data:
+        data['meeting_place']=''
+    data['meet_date']=datetime.strptime(data['meet_date'], "%Y-%m-%d").date()
+    if 'organization_name' in data:
+        data.pop('organization_name')
+    plsql_execute_s('ADD_PROTOCOL', cmd, data)
