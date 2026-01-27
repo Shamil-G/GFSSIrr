@@ -64,10 +64,10 @@
         <div class="form-row">
             <label>{{ res_value('NAME_PARTNERS') }}</label>
             <div style="display: flex; flex-direction: column; gap: 6px; border: 1px solid; max-width: 720px">
-                {% for code, partner in list_partners.items() %}
+                {% for partner in list_partners %}
                 <label>
-                    <input type="checkbox" name="partners" value={{code}}
-                           {% if code in data.partners %}checked{% endif %}>
+                    <input type="checkbox" name="partners" value="{{partner}}"
+                           {% if partner in data.partners %}checked{% endif %}>
                     {{ partner }}
                 </label>
                 {% endfor %}

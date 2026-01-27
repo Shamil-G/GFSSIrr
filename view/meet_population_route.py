@@ -31,6 +31,7 @@ def view_meet_poulation_pension():
         # meeting_place = data.get('meeting_place','')
         photos = files.getlist("photo_report")
 
+        log.info(f"request.form.getlist('partners'): {partners}")
         if len(partners)<1:
             message="Необходимо выбрать не менее чем одну организацию"
         if len(photos) < 2: 
@@ -59,7 +60,7 @@ def view_meet_poulation_pension():
             data['partners'] = json.dumps(partners, ensure_ascii=False)
             data['employee'] = g.user.fio            
 
-            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['photo_path']}\n\tpartners: {data['partners']}')
+            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['photo_path']}\n\tdata.partners: {data['partners']}\n\tpartners: {partners}')
 
             add_protocol(data)
 

@@ -11,6 +11,7 @@ from functools import lru_cache
 @login_required
 def view_organization_name():
     data=extract_payload()
+    log.info(f"API_ORGANIZATION: {data}")
     bin = data['bin']
     return get_org_name(bin)
 

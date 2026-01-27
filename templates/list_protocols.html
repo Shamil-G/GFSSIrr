@@ -1,0 +1,146 @@
+﻿{% extends 'base.html' %}
+
+{% block title %}
+{{ res_value('LIST_PROTOCOLS') }}
+{% endblock %}
+
+{% block main_title %}
+<span style="font-weight: bold">{{ res_value('LIST_PROTOCOLS') }}</span>
+{% endblock %}
+
+{% block body %}
+<div style="display: flex; padding: 4px 0px 4px 10px; align-items: center; font-size: 18px;">
+    <div style="position: relative; display: inline-block;">
+        <input type="month" name="date_protocol" class="button"
+               style="padding: 4px 10px; font-weight: bold; appearance: none; -webkit-appearance: none;">
+        <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none;"><i class="fas fa-calendar-alt"></i></span>
+    </div>
+    <a class="button" href="/get_protocol_excel"
+       style="margin-left: 16px; font-weight: bold;">
+        <i class="fas fa-print"></i>
+        {{ res_value('EXCEL') }}
+    </a>
+</div>
+<div>
+    <table class="table table-bordered table-hover table-sm">
+        <thead class="table-light">
+            <tr>
+                <th>{{ res_value('PROTOCOL_NUM') }}</th>
+                <th>{{ res_value('PROTOCOL_STATUS') }}</th>
+                <th>{{ res_value('PROTOCOL_RAYON') }}</th>
+                <th>{{ res_value('PROTOCOL_RAYON_NAME') }}</th>
+                <th>{{ res_value('PROTOCOL_COUNT') }}</th>
+                <th>{{ res_value('PROTOCOL_SPEAKER') }}</th>
+                <th>{{ res_value('PROTOCOL_FORMAT') }}</th>
+                <th>{{ res_value('PROTOCOL_ADDRESS') }}</th>
+                <th>{{ res_value('PROTOCOL_PARTNERS') }}</th>
+                <th>{{ res_value('PROTOCOL_ORG') }}</th>
+                <th>{{ res_value('PROTOCOL_CATEGORY') }}</th>
+                <th>{{ res_value('PROTOCOL_PHOTO') }}</th>
+                <th>{{ res_value('PROTOCOL_RESPONS') }}</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for p in list_protocols %}
+            <tr>
+                <td>{{ p.prot_num }}</td>
+
+                <td>
+                    {% if p.status==0 %}
+                    {% if boss=='Y' and rfbn!='00' %}
+                    <button class="btn btn-sm btn-success"
+                            data-action="approve"
+                            data-prot="{{ p.prot_num }}">
+                        Утвердить
+                    </button>
+                    <button class="btn btn-sm btn-success"
+                            data-action="finalize"
+                            data-prot="{{ p.prot_num }}">
+                        Доработать
+                    </button>
+                    <button class="btn btn-sm btn-success"
+                            data-action="remove"
+                            data-prot="{{ p.prot_num }}">
+                        Удалить
+                    </button>
+                    {% else %}
+                    <span>На утверждении</span>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if p.status==1 %}
+                    {% if boss=='Y' %}
+                    <button class="btn btn-sm btn-success"
+                            data-action="edit"
+                            data-prot="{{ p.prot_num }}">
+                        Доработать
+                    </button>
+                    {% else %}
+                    На доработке
+                    {% endif %}
+                    {% endif %}
+
+                    {% if p.status==2 %}
+                    <span>Утвержден</span>
+                    {% if boss=='Y' and rfbn=='00' %}
+                    <button class="btn btn-sm btn-success"
+                            data-action="finalize"
+                            data-prot="{{ p.prot_num }}">
+                        Доработать
+                    </button>
+                    <button class="btn btn-sm btn-success"
+                            data-action="remove"
+                            data-prot="{{ p.prot_num }}">
+                        Удалить
+                    </button>
+                    {% endif %}
+                    {% endif %}
+
+                </td>
+
+
+                <td>{{ p.district }}</td>
+                <td style="text-align: left;">{{ p.name }}</td>
+
+                <td>
+                    {{ p.cnt_total }} / {{ p.cnt_women }}
+                </td>
+
+                <td>{{ p.speaker }}</td>
+                <td>{{ p.meeting_format }}</td>
+                <td style="text-align: left;">{{ p.meeting_place }}</td>
+
+                <td style="text-align: left;">
+                    {% if p.partners %}
+                    <ul style="padding-left: 0; margin-left: 0; list-style-position: inside;">
+                        {% for partner in p.partners %}
+                        <li>{{ partner }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    ''
+                    {% endif %}
+                </td>
+
+                <td style="text-align: left;">{{ p.org_name }}</td>
+                <td>{{ p.category }}</td>
+
+                <td>
+                    {% if p.path_photo %}
+                    {% for photo in p.path_photo %}
+                    <a href="/{{ photo }}" target="_blank">📷</a>
+                    {% endfor %}
+                    {% else %}
+                    —
+                    {% endif %}
+                </td>
+
+                <td>{{ p.employee }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<script type="module" data-page="listProtocols" src="/static/js/protocol.js"></script>
+{% endblock %}

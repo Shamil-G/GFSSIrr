@@ -733,3 +733,7 @@ thead th {
 .hidden {
     visibility: hidden;
 }
+input[type="month"]::-webkit-calendar-picker-indicator {
+    opacity: 0;
+    cursor: pointer;
+}

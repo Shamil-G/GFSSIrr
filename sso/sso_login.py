@@ -1,7 +1,7 @@
 from flask import session
 from util.ip_addr import ip_addr
 from util.logger import log
-from app_config import list_admins, admin_deps, deps
+from app_config import permit_post, boss_post
 
      
 class SSO_User:
@@ -12,7 +12,8 @@ class SSO_User:
         self.dep_name=''
         self.roles=''
         self.top_control=0
-        self.roles='Operator'
+        self.boss='N'
+
 
         if 'password' in session:
             self.password = session['password']
@@ -30,12 +31,19 @@ class SSO_User:
                 log.info(f"---> SSO\n\tUSER {self.username} not Registred\n\tDEP_NAME is empty\n<---")
                 return None
 
-            if src_user['dep_name'] not in admin_deps and src_user['dep_name'] not in deps:
-                log.info(f"---> SSO\n\tUSER {self.username} not Registred\n\tDEP_NAME {src_user['dep_name']} have not rigth<---")
-                return None
-
+            # post
             if 'post' not in src_user:
                 log.info(f"---> SSO\n\tUSER {self.username} not Registred\n\tPOST in \n{src_user}\n\tis empty\n<---")
+                return None
+
+            self.post = src_user['post']
+            session['post']=self.post
+
+            if self.post in boss_post:
+                self.top_control=1
+                self.boss='Y'
+
+            if self.boss=='N' and self.post not in permit_post:
                 return None
 
             # RFBN_ID
@@ -43,19 +51,12 @@ class SSO_User:
             # dep_name
             self.dep_name = src_user.get('dep_name','')
             session['dep_name']=self.dep_name
-            # post
             self.post = src_user.get('post','')
             session['post']=self.post
             # FIO
             self.fio = src_user.get('fio','')
             session['fio'] = self.fio
             #
-            if self.dep_name in admin_deps:
-                self.top_control=1
-
-            if self.fio in list_admins:
-                self.roles='Admin'
-            session['roles'] = self.roles
 
             if 'roles' in src_user:
                 self.roles = self.roles.append(src_user['roles'])

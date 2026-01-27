@@ -41,11 +41,11 @@ def upload_files(rfbn_id, files):
     os.makedirs(UPLOAD_PATH, exist_ok=True)
 
     # files = files.getlist("photo_report")
-    list_path = {}
-    for n, f in enumerate(files):
+    list_path = []
+    for f in files:
         if f.filename:
             filename = secure_filename(f.filename)
             path = os.path.join(UPLOAD_PATH, filename)
-            list_path[n] = path
+            list_path.append(path)
             f.save(path)
     return list_path
