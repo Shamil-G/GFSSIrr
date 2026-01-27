@@ -21,6 +21,7 @@ DAT_CREATE = Дата создания:
 FOR_DEVELOPERS = Материалы для разработчиков
 FULL_DESCR=Детальное описание
 MEET_LABOR=Протокол ИРР с рабочим коллективом
+MEET_POPULATION=Протокол ИРР с населением
 MEET_DATE=Дата проведения ИРР
 SELECT_REGION=Выберите регион
 SELECT_RAYON=Выберите район
