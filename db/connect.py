@@ -51,9 +51,6 @@ def close_connection(connection):
 
 def select(stmt, params=None):
     results = []
-    err_message = ''
-    status = 'success'
-
     with get_connection() as connection:
         with connection.cursor() as cursor:
             try:
@@ -63,21 +60,17 @@ def select(stmt, params=None):
 
                 for row in cursor.fetchall():
                     results.append(dict(zip(columns, row)))
-                return status, results, err_message
-
+                return results
             except oracledb.DatabaseError as e:
                 error, = e.args
                 status = 'fail'
                 err_message = f'STMT: {stmt}\nPARAMS: {params}\n\t{error.code} : {error.message}'
                 log.error(f"------select------> ERROR\n{err_message}\n")
-                return status, results, err_message
+                return []
 
 
 def select_one(stmt, args):
     result = {}
-    err_message = ''
-    status='success'
-
     with get_connection() as connection:
         with connection.cursor() as cursor:
             try:
@@ -85,14 +78,13 @@ def select_one(stmt, args):
                 columns = [col[0].lower() for col in cursor.description]
                 row = cursor.fetchone()
                 result=dict(zip(columns, row))
-                return status, result, err_message
+                return result
             except oracledb.DatabaseError as e:
                 error, = e.args
-                status='fail'
                 err_message = f'STMT: {stmt}\n\tARGS: {args}\n\t{error.code} : {error.message}'
                 log.error(f"------select------> ERROR\n\t{err_message}")
                 log.error(err_message)
-                return status, result, err_message
+                return {}
 
 
 def plsql_execute(cursor, proc_name, cmd, args):

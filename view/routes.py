@@ -103,8 +103,8 @@ def uploaded_files(filename):
 @login_required
 def view_list_protocols():
 
-    status, protocols, err = list_protocol(g.user.rfbn_id, g.user.boss)
-    if status!='success':
+    protocols = list_protocol(g.user.rfbn_id, g.user.boss)
+    if len(protocols)==0:
         return render_template('list_protocols.html', list_protocol=[], error=err)
 
     SIZE_MAP = { 'large': 'большой', 'medium': 'средний', 'small': 'малый' }
