@@ -60,6 +60,11 @@ PROTOCOL_ORG=Организация
 PROTOCOL_CATEGORY=Категория
 PROTOCOL_PHOTO=Фото
 PROTOCOL_RESPONS=Ответственный
+PROTOCOL_APPROVE=Утвердить
+PROTOCOL_REWORK=Доработать
+PROTOCOL_REFUSE=Отказать
+PROTOCOL_ON_APPROVE=На утверждении
+PROTOCOL_ON_REWORK=На доработке
 
 ID_CALC=Ид расчета
 INSERT_NICKNAME=Введите зарегистрированное имя

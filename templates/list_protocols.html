@@ -50,59 +50,71 @@
                     {% if p.status==0 %}
                         {% if boss == 'Y' and rfbn != '00' %}
                         <!-- Согласовать -->
-                        <button style="border: none; padding: 0px; background: inherit;"
+                        <button style="border: none; padding: 8px 2px 0px 0px; background: inherit;"
                                 data-action="approve"
                                 data-prot="{{ p.prot_num }}"
-                                title="Утвердить">
+                                onmouseover="this.style.background='#E8FCD9'"
+                                onmouseout="this.style.background='inherit'"
+                                title="{{ res_value('PROTOCOL_APPROVE') }}">
                             <img src="/static/img/icons8-approve-48.png" alt="approve" style="width:32px; height:32px;">
                         </button>
 
                         <!-- Доработать -->
-                        <button style="border: none; padding: 0px; background: inherit"
+                        <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
                                 data-action="finalize"
                                 data-prot="{{ p.prot_num }}"
-                                title="Доработать">
+                                onmouseover="this.style.background='#FFF6C8'"
+                                onmouseout="this.style.background='inherit'"
+                                title="{{ res_value('PROTOCOL_REWORK') }}">
                             <img src="/static/img/icons8-fix-48.png" alt="finalize" style="width:32px; height:32px;">
                         </button>
 
                         <!-- Удалить -->
-                        <button style="border: none; padding: 0px; background: inherit"
+                        <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
                                 data-action="remove"
                                 data-prot="{{ p.prot_num }}"
-                                title="Отказать">
+                                onmouseover="this.style.background='#FFC2C2'"
+                                onmouseout="this.style.background='inherit'"
+                                title="{{ res_value('PROTOCOL_REFUSE') }}">
                             <img src="/static/img/icons8-delete-48.png" alt="remove" style="width:32px; height:32px;">
                         </button>
                         {% else %}
-                            <span>На утверждении</span>
+                        <span>{{ res_value('PROTOCOL_ON_APPROVE') }}</span>
                         {% endif %}
                     {% endif %}
 
                     {% if p.status==1 %}
                     {% if boss=='Y' %}
-                            <button style="border: none; padding: 0px; background: inherit"
+                            <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
                                     data-action="edit"
                                     data-prot="{{ p.prot_num }}"
-                                    title="Доработать">
+                                    onmouseover="this.style.background='#FFF6C8'"
+                                    onmouseout="this.style.background='inherit'"
+                                    title="{{ res_value('PROTOCOL_REWORK') }}">
                                 <img src="/static/img/icons8-fix-48.png" alt="finalize" style="width:32px; height:32px;">
                             </button>
                     {% else %}
-                            <span>На доработке</span>
+                            <span>{{ res_value('PROTOCOL_ON_REWORK') }}</span>
                     {% endif %}
                     {% endif %}
 
                     {% if p.status==2 %}
                     <span>Утвержден</span>
                     {% if boss=='Y' and rfbn=='00' %}
-                    <button style="border: none; padding: 0px; background: inherit"
+                    <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
                             data-action="finalize"
                             data-prot="{{ p.prot_num }}"
-                            title="Доработать">
+                            onmouseover="this.style.background='#FFF6C8'"
+                            onmouseout="this.style.background='inherit'"
+                            title="{{ res_value('PROTOCOL_REWORK') }}">
                         <img src="/static/img/icons8-fix-48.png" alt="finalize" style="width:32px; height:32px;">
                     </button>
-                    <button style="border: none; padding: 0px; background: inherit"
+                    <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
                             data-action="remove"
                             data-prot="{{ p.prot_num }}"
-                            title="Отказать">
+                            onmouseover="this.style.background='#FFC2C2'"
+                            onmouseout="this.style.background='inherit'"
+                            title="{{ res_value('PROTOCOL_REFUSE') }}">
                         <img src="/static/img/icons8-delete-48.png" alt="remove" style="width:32px; height:32px;">
                     </button>
                     {% endif %}
