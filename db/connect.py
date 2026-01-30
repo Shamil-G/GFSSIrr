@@ -48,6 +48,8 @@ def close_connection(connection):
     global _pool
     _pool.release(connection)
 
+def is_english_column(name: str) -> bool: 
+    return all(c.isascii() and (c.isalnum() or c == '_') for c in name)
 
 def select(stmt, params=None):
     results = []
@@ -56,7 +58,7 @@ def select(stmt, params=None):
             try:
                 cursor.execute(stmt, params or {})
 
-                columns = [col[0].lower() for col in cursor.description]
+                columns = [ col[0].lower() if is_english_column(col[0]) else col[0] for col in cursor.description ]
 
                 for row in cursor.fetchall():
                     results.append(dict(zip(columns, row)))
@@ -74,7 +76,7 @@ def select_one(stmt, args):
         with connection.cursor() as cursor:
             try:
                 cursor.execute(stmt, args)
-                columns = [col[0].lower() for col in cursor.description]
+                columns = [ col[0].lower() if is_english_column(col[0]) else col[0] for col in cursor.description ]
                 row = cursor.fetchone()
                 result=dict(zip(columns, row))
                 return result
