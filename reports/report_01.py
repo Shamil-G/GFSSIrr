@@ -28,22 +28,26 @@ LINE_HEIGHT = 15
 def get_select():
     return """
         select
-            prot_num,
-            date_irr,
-            district,
-            cnt_total,
-            cnt_women,
-            bin,
-            meeting_format,
-            category,
-            speaker,
-            employee,
-            meeting_place,
-            partners
-        from list_protocol
+            prot_num as "Номер протокола",
+            date_irr as "Дата проведения ИРР",
+            district as "Район",
+            cnt_total as "Всего участников",
+            cnt_women as "Всего женщин",
+            bin as "БИН",
+            meeting_format as "Формат встречи",
+            case when category='large' then 'Крупный'
+			     when category='middle' then 'Средний'
+			     when category='small' then 'Малый'
+				 else '' end  as "Категория",
+            speaker as "ФИО спикера",
+            employee as "Исполнитель",
+            meeting_place as "Адрес ИРР",
+            partners as "Партнеры"
+        from list_protocol l
+		where l.status=2
+		and	  l.rfbn_id=case when :rfbn='00' then l.rfbn_id else :rfbn end
         order by district, date_irr
     """
-
 
 
 # def format_worksheet(worksheet, common_format):
@@ -59,7 +63,7 @@ def get_select():
 # 	worksheet.write(2, 2, 'Сотрудник', common_format)
 
 
-def report_01(filename=f"rep_{report_code}.xlsx"):
+def report_01(rfbn_id: str, filename=f"rep_{report_code}.xlsx"):
 	s_date = datetime.datetime.now().strftime("%H:%M:%S")
 	log.info('We are in report_01 !')
 	output = io.BytesIO()
@@ -86,7 +90,9 @@ def report_01(filename=f"rep_{report_code}.xlsx"):
 			"small": "Малый",
 		}
 		
-		records = select(get_select())
+		params = {'rfbn_id': rfbn_id}
+		records = select(get_select(),params)
+		log.info('')
 
 		df = pd.DataFrame.from_records(records)
 

@@ -150,5 +150,5 @@ def view_action_protocols():
 def view_get_protocol_excel():
     data = extract_payload()
     log.info(f'--->\n\tPROTOCOL ACTION. \n\tARGS: {data}\n\t<---')
-    return report_01()
+    return report_01(g.user.rfbn_id)
 

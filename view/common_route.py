@@ -63,8 +63,8 @@ def protocol_form(prot_num):
             message=f"Необходимо выбрать не менее чем одну организацию. "
         if len(meeting_place)==0 and len(bin)==0:
             message=f'{message}Необходимо выбрать либо адрес проведения ИРР, либо организацию. '
-        if len(photos) < 2: 
-            message=f"{message}{'\n' if message else ''}Необходимо выбрать не менее 2 файлов."
+        if len(photos) < 1: 
+            message=f"{message}{'\n' if message else ''}Необходимо выбрать не менее 1 файла."
 
         if len(message)>0:
             load_data["partners"] = partners

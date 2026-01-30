@@ -48,7 +48,7 @@ class SSO_User:
                 self.roles='TOP'
                 self.top_level=2
 
-            log.info(f'SSO. list_admin_dep: {list_top_dep}. top_level: {self.top_level}')
+            log.debug(f'SSO. list_admin_dep: {list_top_dep}. top_level: {self.top_level}')
             # check user right
             if self.top_level==0:
                 list_middle_dep = middle_post.get(self.post,[])

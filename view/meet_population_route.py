@@ -34,8 +34,8 @@ def view_meet_poulation_pension():
         log.info(f"request.form.getlist('partners'): {partners}")
         if len(partners)<1:
             message="Необходимо выбрать не менее чем одну организацию"
-        if len(photos) < 2: 
-            message=f"{message}{'\n' if message else ''}\nНеобходимо выбрать не менее 2 файлов"
+        if len(photos) < 1: 
+            message=f"{message}{'\n' if message else ''}\nНеобходимо выбрать не менее 1 файла"
 
         if len(message)>0:
             data["partners"] = partners

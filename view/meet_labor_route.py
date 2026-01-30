@@ -41,7 +41,7 @@ def view_meet_labor_pension():
         if len(organization_name)==0 and len(bin)==0:
             message=f'{message}Необходимо выбрать либо адрес проведения ИРР, либо организацию. '
         if len(photos) < 2: 
-            message=f"{message}{'\n' if message else ''}Необходимо выбрать не менее 2 файлов."
+            message=f"{message}{'\n' if message else ''}Необходимо выбрать не менее 1 файла."
 
         if len(message)>0:
             data["partners"] = partners
