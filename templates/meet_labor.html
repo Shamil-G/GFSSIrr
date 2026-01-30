@@ -14,16 +14,16 @@
     <form class="irr-form" method="post" enctype="multipart/form-data">
 
         <div class="form-row">
-            <label>{{ res_value('MEET_DATE') }}</label>
-            <input class="input_d" style="max-width: 132px" type="date" name="meet_date" value="{{ data.meet_date }}" required>
+            <label for="date_irr">{{ res_value('MEET_DATE') }}</label>
+            <input id="date_irr" class="input_d" style="max-width: 132px" type="date" name="date_irr" value="{{ data.date_irr.strftime('%Y-%m-%d') if data.date_irr else '' }}" required>
         </div>
 
         <div class="form-row">
             <label for="region-select">{{ res_value('SELECT_REGION') }}</label>
-            <select id="region-select" class="input_s" style="min-width: 274px" name="region" value="{{ data.region }}" required>
+            <select id="region-select" class="input_s" style="min-width: 274px" name="rfbn_id" value="{{ data.rfbn_id }}" required>
                 {% for code, region in regions.items() %}
-                <option value="{{ code }}"
-                        {% if code in data.region %}selected{% endif %}>
+                <option value="{{ code[:2] }}"
+                        {% if code[:2] in data.rfbn_id %}selected{% endif %}>
                     {{ region.legacy_name }}
                 </option>
                 {% endfor %}
@@ -39,17 +39,17 @@
 
         <div class="form-row">
             <label for="count-participient">{{ res_value('COUNT_PARTICIPIENT') }}</label>
-            <input id="count-participient" class="input_s" style="max-width: 80px" type="number" name="participants_total" min="1" value="{{ data.participants_total }}" required>
+            <input id="count-participient" class="input_s" style="max-width: 80px" type="number" name="cnt_total" min="1" value="{{ data.cnt_total }}" required>
         </div>
 
         <div class="form-row">
             <label for="count-women">{{ res_value('COUNT_WOMEN') }}</label>
-            <input id="count-women" class="input_s" style="max-width: 80px" type="number" name="participants_women" min="0" value="{{ data.participants_women }}" required>
+            <input id="count-women" class="input_s" style="max-width: 80px" type="number" name="cnt_women" min="0" value="{{ data.cnt_women }}" required>
         </div>
 
         <div class="form-row">
             <label for="speaker-fio">{{ res_value('SPEAKER_FIO') }}</label>
-            <input id="speaker-fio" class="input_s" type="text" name="speaker_fio" list="speakers" value="{{ data.speaker_fio }}" required>
+            <input id="speaker-fio" class="input_s" type="text" name="speaker" list="speakers" value="{{ data.speakero }}" required>
         </div>
 
         <div class="form-row">
@@ -78,9 +78,9 @@
             <label for="category-subject">{{ res_value('CATEGORY_SUBJECT') }}</label>
             <select id="category-subject" class="input_s" style="max-width: 188px" name="business_category" required>
                 <option value="">{{ res_value('CATEGORY_SELECT') }}</option>
-                <option value="large" {% if "large" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_LARGE') }}</option>
-                <option value="medium" {% if "medium" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_MIDDLE') }}</option>
-                <option value="small" {% if "small" in data.business_category %}selected{% endif %}>{{ res_value('CATEGORY_SMALL') }}</option>
+                <option value="large" {% if "large" in data.category %}selected{% endif %}>{{ res_value('CATEGORY_LARGE') }}</option>
+                <option value="medium" {% if "medium" in data.category %}selected{% endif %}>{{ res_value('CATEGORY_MIDDLE') }}</option>
+                <option value="small" {% if "small" in data.category %}selected{% endif %}>{{ res_value('CATEGORY_SMALL') }}</option>
             </select>
         </div>
 

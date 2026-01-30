@@ -14,74 +14,84 @@ def get_list_rayons(rfbn_id):
         select rfbn_id, name
         from loader.branch b 
     """
-    log.debug(f'GET LIST RAYONS')
-    with get_connection() as connection:
-        with connection.cursor() as cursor:
-            if rfbn_id!='0000':
-                args = {'rfbn_id': rfbn_id}
-                cursor.execute(stmt, args)
-            else:
-                cursor.execute(full_stmt)
-            result = {}
-            records = cursor.fetchall()
-            for rec in records:
-                result[rec[0]] = rec[1]
-            log.debug(f'------ GET LIST RAYONS. RESULT:\n\t{result}')
-            return result
+    log.debug(f'GET LIST RAYONS for RFBN_ID: {rfbn_id}')
+
+    if rfbn_id!='0000':
+        args = {'rfbn_id': rfbn_id}
+        records = select(stmt, args)
+    else:
+        args = {}
+        records = select(full_stmt, args)
+    log.debug(f'GET LIST RAYONS. RESULT: {records}')
+    return records
 
 
 def get_partners():
     stmt = f"""
         select value from params where param_name='partner'
     """
-    log.debug(f'GET PARTNERS')
-    with get_connection() as connection:
-        with connection.cursor() as cursor:
-            cursor.execute(stmt)
-            result = []
-            records = cursor.fetchall()
-            for rec in records:
-                result.append(rec[0])
-            log.info(f'------ GET PARTNERS. RESULT:\n\t{result}')
-            return result
+    args ={}
+    records = select(stmt, args) 
+    list_value = [item['value'] for item in records]
+        
+    log.info(f'GET PARTNERS. RESULT: {list_value}')
+    return list_value
 
 
 def get_org_name(bin: str)->str:
     stmt = "select p_name as name from loader.pmpd_pay_doc pd where p_rnn=:bin and rownum=1"
     args={'bin': bin}
-    status, rec, err_message = select_one(stmt, args)
-    log.info(f'------ GET ORG NAME. STATUS: {status}, RESULT: {rec}')
-    if status=='fail' or rec==None:
-        log.info(f'*** GET ORG NAME\n\tSTATUS: {status}\n\tERROR: {err_message}\n\t***')
-        return {'name': ''}
-    return rec
+    return select_one(stmt, args)
 
 
 def add_protocol(data: dict):
     cmd="""
-    begin manage.add_protocol(:meet_date, :region, :district, :participants_total, 
-                                :participants_women, :bin, :meeting_format,
-                                :business_category, :partners, :speaker_fio, :employee,
-                                :meeting_place, :photo_path); end;
+    begin manage.add_protocol(:date_irr, :rfbn_id, :district, :cnt_total, 
+                                :cnt_women, :bin, :meeting_format,
+                                :category, :partners, :speaker, :employee,
+                                :meeting_place, :path_photo); end;
     """
-
     if 'bin' not in data:
         data['bin']=''
-    if 'business_category' not in data:
-        data['business_category']=''
+    if 'category' not in data:
+        data['category']=''
     if 'meeting_place' not in data:
         data['meeting_place']=''
     
-    data['meet_date']=datetime.strptime(data['meet_date'], "%Y-%m-%d").date()
+    data['date_irr']=datetime.strptime(data['date_irr'], "%Y-%m-%d").date()
+
     if 'organization_name' in data:
         data.pop('organization_name')
     plsql_execute_s('ADD_PROTOCOL', cmd, data)
 
 
-def list_protocol(rfbn, boss):
+def update_protocol(data: dict):
+    cmd="""
+    begin manage.update_protocol(:prot_num, :date_irr, :rfbn_id, :district, :cnt_total, 
+                                :cnt_women, :bin, :meeting_format,
+                                :category, :partners, :speaker, :employee,
+                                :meeting_place, :path_photo); end;
+    """
+    log.info(f'UPDATE_PROTOCOL: {len(data)} : {data}')
+    data['date_irr']=datetime.strptime(data['date_irr'], "%Y-%m-%d").date()
+
+    if 'bin' not in data:
+        data['bin']=''
+    if 'category' not in data:
+        data['category']=''
+    if 'meeting_place' not in data:
+        data['meeting_place']=''
+    
+    if 'organization_name' in data:
+        data.pop('organization_name')
+    plsql_execute_s('ADD_PROTOCOL', cmd, data)
+
+
+def list_protocol(rfbn, top_level):
     cmd="""
         select prot_num, 
                l.status,
+               l.rfbn_id,
                district, 
                b.name,
                cnt_total, cnt_women, 
@@ -100,17 +110,33 @@ def list_protocol(rfbn, boss):
         where l.district=b.rfbn_id
         and   date_irr>=trunc(sysdate,'YY')
         and   l.rfbn_id = 
-                case when substr(:rfbn,1,2)='00' 
+                case when :top_level=2
                      then l.rfbn_id
                      else substr(:rfbn,1,2)
                 end
         order by status asc, date_irr desc               
     """
 
-    args = { 'rfbn': rfbn[0:2]}
-    log.info(f'LIST_PROTOCOL: {args}')
-    return select(cmd, args)
+    params = { 'rfbn': rfbn[0:2], 'top_level': top_level }
+    protocols = select(cmd, params)
+    for p in protocols:
+        for key, value in p.items(): 
+            if value is None: p[key] = ''
+    log.info(f'LIST_PROTOCOLS. PARAMS {params}')
+
+    return protocols
 
 
 def set_action(f_name, proc_name, args):
     plsql_execute_s(f_name, proc_name, args)
+
+
+def load_protocol(prot_num):
+    stmt = "select * from list_protocol where prot_num=:protocol_num"
+    params = {'protocol_num': prot_num}
+    result = select_one(stmt, params)
+    for key, value in result.items(): 
+        if value is None: result[key] = ''
+    log.info(f'--->\n\tLOAD PROTOCOL:\n\tRESULT: {result}\n<---')
+    return result
+

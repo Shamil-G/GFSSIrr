@@ -65,6 +65,8 @@ PROTOCOL_REWORK=Доработать
 PROTOCOL_REFUSE=Отказать
 PROTOCOL_ON_REWORK=На доработке
 PROTOCOL_ON_APPROVE=На утверждении
+APPROVED_PROTOCOL=Утвержден
+PROTOCOL_EDIT=Корректировка протокола
 
 ID_CALC = Ид расчета
 INSERT_NICKNAME =Введите зарегистрированное имя

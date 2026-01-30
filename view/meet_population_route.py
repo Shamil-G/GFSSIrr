@@ -6,6 +6,7 @@ from regions import regions
 from model.functions import get_list_rayons, get_partners, add_protocol
 from view.common_route import get_cached_rayons
 import json
+from datetime import datetime
 
 
 @app.route('/meet_population', methods=['GET', 'POST'])
@@ -15,21 +16,20 @@ def view_meet_poulation_pension():
     message=''
     data={}
     list_partners=get_partners()
+    if g.user.top_level==0:
+        list_regions = { g.user.rfbn_id: regions[g.user.rfbn_id] }
+    else:
+        list_regions=regions
+
+    list_rayons = get_cached_rayons(g.user.rfbn_id)
 
     if request.method == 'POST':
         data = dict(request.form)
         files = request.files
         
-        # meet_date = data.get('meet_date','')
-        region = data.get('region','')
-        # district = data.get('district','')
-        # participants_total = data.get('participants_total','')
-        # participants_women = data.get('participants_women','')
-        # speaker_fio = data.get('speaker_fio','')
-        # meeting_format = data.get('meeting_format','')
+        rfbn_id = data.get('rfbn_id','')
         partners = request.form.getlist('partners')
-        # meeting_place = data.get('meeting_place','')
-        photos = files.getlist("photo_report")
+        photos = files.getlist("path_photo")
 
         log.info(f"request.form.getlist('partners'): {partners}")
         if len(partners)<1:
@@ -39,38 +39,19 @@ def view_meet_poulation_pension():
 
         if len(message)>0:
             data["partners"] = partners
-            
-            if g.user.top_control==0:
-                list_regions = { g.user.rfbn_id: regions[g.user.rfbn_id] }
-            else:
-                list_regions=regions
+            data['date_irr']=datetime.strptime(data['date_irr'], "%Y-%m-%d").date()
 
-            list_rayons = get_cached_rayons(g.user.rfbn_id)
-
-            return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_control, message=message, list_partners=list_partners, data=data)
+            return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_level, message=message, list_partners=list_partners, data=data)
         else:
-            # log.info(f'POST. MEET LABOR\n\tdata: {data}')
-            # log.info(f'POST. MEET LABOR\n\tmeet_date: {meet_date}\n\tregion: {region}\n\tdistrict: {district}\n\tparticipants_total: {participants_total}')
-            # log.info(f'POST. MEET LABOR\n\tparticipants_women: {participants_women}\n\tspeaker-fio: {speaker_fio}\n\tmeeting_format: {meeting_format}')
-            # log.info(f'POST. MEET LABOR\n\tmeeting-partners: {partners}\n\meeting_place: {meeting_place}')
+            list_path=upload_files(rfbn_id, photos)
 
-            list_path=upload_files(region, photos)
-
-            data['photo_path'] = json.dumps(list_path, ensure_ascii=False)
+            data['path_photo'] = json.dumps(list_path, ensure_ascii=False)
             data['partners'] = json.dumps(partners, ensure_ascii=False)
             data['employee'] = g.user.fio            
 
-            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['photo_path']}\n\tdata.partners: {data['partners']}\n\tpartners: {partners}')
+            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['path_photo']}\n\tdata.partners: {data['partners']}\n\tpartners: {partners}')
 
             add_protocol(data)
 
-    # rows, columns = get_solidary_items(scenario)
-    if g.user.top_control==0:
-        list_regions = { g.user.rfbn_id: regions[g.user.rfbn_id] }
-    else:
-        list_regions=regions
-
-    list_rayons = get_cached_rayons(g.user.rfbn_id)
-
-    # log.info(f"------->\n\tVIEW MEET POPULATION\n\tRFBN_ID: {g.user.rfbn_id}\n\tTOP_CONTROL: {g.user.top_control}\n<-------")
-    return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_control, message=message, list_partners=list_partners, data=data)
+    # log.info(f"------->\n\tVIEW MEET POPULATION\n\tRFBN_ID: {g.user.rfbn_id}\n\ttop_level: {g.user.top_level}\n<-------")
+    return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_level, message=message, list_partners=list_partners, data=data)

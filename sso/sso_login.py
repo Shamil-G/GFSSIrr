@@ -1,7 +1,7 @@
 from flask import session
 from util.ip_addr import ip_addr
 from util.logger import log
-from app_config import permit_post, boss_post
+from app_config import top_post, middle_post, work_post
 
      
 class SSO_User:
@@ -11,9 +11,7 @@ class SSO_User:
         self.post=''
         self.dep_name=''
         self.roles=''
-        self.top_control=0
-        self.boss='N'
-
+        self.top_level=0
 
         if 'password' in session:
             self.password = session['password']
@@ -22,7 +20,7 @@ class SSO_User:
 
             self.username = src_user['login_name']
             session['username'] = self.username
-            
+            # Required fields check
             if 'fio' not in src_user:
                 log.info(f"---> SSO\n\tUSER {self.username} not Registred\n\tFIO is empty\n<---")
                 return None
@@ -31,19 +29,8 @@ class SSO_User:
                 log.info(f"---> SSO\n\tUSER {self.username} not Registred\n\tDEP_NAME is empty\n<---")
                 return None
 
-            # post
             if 'post' not in src_user:
                 log.info(f"---> SSO\n\tUSER {self.username} not Registred\n\tPOST in \n{src_user}\n\tis empty\n<---")
-                return None
-
-            self.post = src_user['post']
-            session['post']=self.post
-
-            if self.post in boss_post:
-                self.top_control=1
-                self.boss='Y'
-
-            if self.boss=='N' and self.post not in permit_post:
                 return None
 
             # RFBN_ID
@@ -51,22 +38,49 @@ class SSO_User:
             # dep_name
             self.dep_name = src_user.get('dep_name','')
             session['dep_name']=self.dep_name
+
+            # post
             self.post = src_user.get('post','')
             session['post']=self.post
+            # check admin right!
+            list_top_dep = top_post.get(self.post,[])
+            if self.dep_name in list_top_dep:
+                self.roles='TOP'
+                self.top_level=2
+
+            log.info(f'SSO. list_admin_dep: {list_top_dep}. top_level: {self.top_level}')
+            # check user right
+            if self.top_level==0:
+                list_middle_dep = middle_post.get(self.post,[])
+                if '*' in list_middle_dep or self.dep_name in list_middle_dep:
+                    self.roles='Head'
+                    self.top_level=1
+
+            # check user right
+            if self.top_level==0:
+                list_work_dep = work_post.get(self.post,[])
+                if '*' in list_work_dep or self.dep_name in list_work_dep:
+                    self.roles='Operator'
+                else:
+                    log.info(f'SSO. Undefined ROLE for: {self.username}')
+                    return None
+
             # FIO
             self.fio = src_user.get('fio','')
             session['fio'] = self.fio
             #
 
             if 'roles' in src_user:
-                self.roles = self.roles.append(src_user['roles'])
+                self.roles.append(src_user['roles'])
                 session['roles']=self.roles
                 
-            session['full_name'] = self.fio
+            session['top_level']=self.top_level
+
             self.full_name = self.fio
+            session['full_name'] = self.fio
 
             self.ip_addr = ip
-            log.info(f"---> SSO SUCCESS\n\tUSERNAME: {self.username}\n\tIP_ADDR: {self.ip_addr}\n\tFIO: {self.fio}\n\tROLES: {self.roles}, POST: {self.post}\n\tDEP_NAME: {self.dep_name}\n<---")
+            log.info(f"--->\n\tSSO SUCCESS\n\tUSERNAME: {self.username}\n\tIP_ADDR: {self.ip_addr}\n\tFIO: {self.fio}\n\tROLES: {self.roles}, POST: {self.post}\n\tRFBN: {self.rfbn_id}\n\tDEP_NAME: {self.dep_name}\n<---")
             return self
         log.info(f"---> SSO FAIL. USERNAME: {src_user}\n\tip_addr: {ip}, password: {session['password']}\n<---")
         return None
@@ -94,7 +108,7 @@ class SSO_User:
             return False
 
     def get_id(self):
-        log.debug(f'---> SSO\n\tGET_ID. self.src_user: {self.src_user}, self.username: {self.username}\n<---')
+        log.debug(f'LDAP_User. GET_ID. self.src_user: {self.src_user}, self.username: {self.username}')
         if hasattr(self, 'src_user'):
             return self.src_user
         else: 

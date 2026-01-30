@@ -1,3 +1,6 @@
+import { bindRegionDistrict,  bindPhotoReport, setTheme } from '/static/js/meet_labor.js';
+
+
 document.addEventListener('click', e => {
     const btn = e.target.closest('button[data-action]');
     if (!btn) return;

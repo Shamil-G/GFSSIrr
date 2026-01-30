@@ -1,180 +1,212 @@
 import xlsxwriter
 import datetime
 from   util.logger import log
-from oracledb import select
+from	db.connect import select
 from  app_config import REPORT_PATH
 import pandas as pd
 from flask import Response
 import io
 
 
-report_name = 'Проведение ИРР'
+report_name = 'РџСЂРѕРІРµРґРµРЅРёРµ РР Р '
 report_code = 'PROT_01'
 
+HEADER_ROW = 2
+DATA_START_ROW = HEADER_ROW + 1
+EXCLUDE_COL = "РџР°СЂС‚РЅРµСЂС‹"
+LINE_HEIGHT = 15
+
+
+# def get_select():
+# 	stmt_report = f"""
+# 		select * from list_protocol order by district, date_irr
+# 	"""
+# 	log.debug(f"SQL: {stmt_report}")
+
+# 	return stmt_report
 
 def get_select():
-	stmt_report = f"""
-		select * from list_protocol order by district, date_irr
-	"""
-	log.debug(f"SQL: {stmt_report}")
-
-	return stmt_report
-
-
-def format_worksheet(worksheet, common_format):
-	worksheet.set_row(0, 24)
-	worksheet.set_row(1, 24)
-
-	worksheet.set_column(0, 0, 5)
-	worksheet.set_column(1, 1, 44)
-	worksheet.set_column(2, 2, 32)
-
-	worksheet.write(2, 0, '№', common_format)
-	worksheet.write(2, 1, 'Департамент', common_format)
-	worksheet.write(2, 2, 'Сотрудник', common_format)
+    return """
+        select
+            prot_num,
+            date_irr,
+            district,
+            cnt_total,
+            cnt_women,
+            bin,
+            meeting_format,
+            category,
+            speaker,
+            employee,
+            meeting_place,
+            partners
+        from list_protocol
+        order by district, date_irr
+    """
 
 
-def export_to_excel(df_pivot, columns, filename=f"rep_{report_code}.xlsx"):
+
+# def format_worksheet(worksheet, common_format):
+# 	worksheet.set_row(0, 24)
+# 	worksheet.set_row(1, 24)
+
+# 	worksheet.set_column(0, 0, 5)
+# 	worksheet.set_column(1, 1, 44)
+# 	worksheet.set_column(2, 2, 32)
+
+# 	worksheet.write(2, 0, 'в„–', common_format)
+# 	worksheet.write(2, 1, 'Р”РµРїР°СЂС‚Р°РјРµРЅС‚', common_format)
+# 	worksheet.write(2, 2, 'РЎРѕС‚СЂСѓРґРЅРёРє', common_format)
+
+
+def report_01(filename=f"rep_{report_code}.xlsx"):
 	s_date = datetime.datetime.now().strftime("%H:%M:%S")
+	log.info('We are in report_01 !')
 	output = io.BytesIO()
 	with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
 
-		s_date = datetime.datetime.now().strftime("%H:%M:%S")
-	
-		workbook  = writer.book
+		columns_map = [
+			("prot_num",        "РќРѕРјРµСЂ РїСЂРѕС‚РѕРєРѕР»Р°"),
+			("date_irr",        "Р”Р°С‚Р° РїСЂРѕРІРµРґРµРЅРёСЏ РР Р "),
+			("district",        "Р Р°Р№РѕРЅ"),
+			("cnt_total",       "Р’СЃРµРіРѕ СѓС‡Р°СЃС‚РЅРёРєРѕРІ"),
+			("cnt_women",       "Р’СЃРµРіРѕ Р¶РµРЅС‰РёРЅ"),
+			("bin",             "Р‘РРќ"),
+			("meeting_format",  "Р¤РѕСЂРјР°С‚ РІСЃС‚СЂРµС‡Рё"),
+			("category",        "РљР°С‚РµРіРѕСЂРёСЏ"),
+			("speaker",         "Р¤РРћ СЃРїРёРєРµСЂР°"),
+			("employee",        "РСЃРїРѕР»РЅРёС‚РµР»СЊ"),
+			("meeting_place",   "РђРґСЂРµСЃ РР Р "),
+			("partners",        "РџР°СЂС‚РЅРµСЂС‹"),
+		]
 
-		worksheet = workbook.add_worksheet('Отчёт')
-		sql_sheet = workbook.add_worksheet('SQL')
-
-		title_format = workbook.add_format({'bg_color': '#D1FFFF', 'align': 'center', 'font_color': 'black'})
-		#title_format = workbook.add_format({'bg_color': '#C5FFFF', 'align': 'center', 'font_color': 'black'})
-		title_format.set_align('vcenter')
-		title_format.set_border(1)
-		title_format.set_text_wrap()
-		title_format.set_bold()
-
-		title_name_report = workbook.add_format({'align': 'left', 'font_color': 'black', 'font_size': '14'})
-		title_name_report .set_align('vcenter')
-		title_name_report .set_bold()
-
-		title_format_it = workbook.add_format({'align': 'right'})
-		title_format_it.set_align('vcenter')
-		title_format_it.set_italic()
-
-		title_report_code = workbook.add_format({'align': 'right', 'font_size': '14'})
-		title_report_code.set_align('vcenter')
-		title_report_code.set_bold()
-
-		common_format = workbook.add_format({'align': 'center', 'font_color': 'black'})
-		common_format.set_align('vcenter')
-		common_format.set_border(1)
-
-		region_name_format = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		region_name_format.set_align('vcenter')
-		region_name_format.set_border(1)
-
-		category_name_format = workbook.add_format({'align': 'center', 'font_color': 'black'})
-		category_name_format.set_align('vcenter')
-		category_name_format.set_border(1)
-
-		category_name_format_1 = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		category_name_format_1.set_border(1)
-		category_name_format_1.set_bg_color('#FFF8DC')	  # Желтенький
-		category_name_format_2 = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		category_name_format_2.set_bg_color('#DAFBC5')	  # Зелененький
-		category_name_format_3 = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		category_name_format_3.set_bg_color('#FDFEE5')	  # Желтенький
-		category_name_format_4 = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		category_name_format_4.set_bg_color('#EBE6FF')	  #  Светло-голубой
-		category_name_format_5 = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		category_name_format_5.set_bg_color('#FFFFE0')	  # Слегка желтенький
-		category_name_format_6 = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		category_name_format_6.set_bg_color('#FFE1E1')	  # Розовый
-		category_name_format_7 = workbook.add_format({'align': 'left', 'font_color': 'black'})
-		category_name_format_7.set_bg_color('#E0F7FF')    # Голубой
-		category_name_format_1.set_border(1)
-		category_name_format_2.set_border(1)
-		category_name_format_3.set_border(1)
-		category_name_format_4.set_border(1)
-		category_name_format_5.set_border(1)
-		category_name_format_6.set_border(1)
-		category_name_format_7.set_border(1)
-
-		sum_pay_format = workbook.add_format({'num_format': '#,###,##0.00', 'font_color': 'black', 'align': 'vcenter'})
-		sum_pay_format.set_border(1)
-
-		date_format = workbook.add_format({'num_format': 'dd.mm.yyyy', 'align': 'center'})
-		date_format.set_border(1)
-		date_format.set_align('vcenter')
-
-		number_format = workbook.add_format({'num_format': '# ### ### ##0', 'align': 'center'})
-		number_format.set_border(1)
-		number_format.set_align('vcenter')
-
-		digital_format = workbook.add_format({'num_format': '# ### ### ##0', 'align': 'center'})
-		digital_format.set_border(1)
-		digital_format.set_align('vcenter')
-
-		money_format = workbook.add_format({'num_format': '### ### ### ### ##0.00', 'align': 'right'})
-		money_format.set_border(1)
-		money_format.set_align('vcenter')
-
-		percent_format = workbook.add_format({'num_format': '### ##0.00', 'align': 'center'})
-		percent_format.set_border(1)
-		percent_format.set_align('vcenter')
-
-		now = datetime.datetime.now()
-		log.info(f'Начало формирования {filename}: {now.strftime("%d-%m-%Y %H:%M:%S")}')
-		worksheet = workbook.add_worksheet('Список')
-		sql_sheet = workbook.add_worksheet('SQL')
-			
-		merge_format = workbook.add_format({
-			'bold':     False,
-			'border':   6,
-			'align':    'left',
-			'valign':   'vcenter',
-			'fg_color': '#FAFAD7',
-			'text_wrap': True
-		})
-		stmt_report = get_select()
-
-		sql_sheet.merge_range('A1:I25', f'{stmt_report}', merge_format)
-
-		worksheet.activate()
-		format_worksheet(worksheet=worksheet, common_format=title_format)
-
-		worksheet.write(0, 0, report_name, title_name_report)
-		#worksheet.write(1, 0, f'За период: {year}', title_name_report)
-
+		CATEGORY_MAP = {
+			"large": "РљСЂСѓРїРЅС‹Р№",
+			"medium": "РЎСЂРµРґРЅРёР№",
+			"small": "РњР°Р»С‹Р№",
+		}
 		
 		records = select(get_select())
 
-		log.info(f'REPORT: {report_code}. Формируем выходную EXCEL таблицу')
+		df = pd.DataFrame.from_records(records)
 
-		row_cnt = 1
-		shift_row = 2
-		#for record in records:
-		for record in records:
-			col = 0
-			worksheet.write(row_cnt+shift_row, col, row_cnt, digital_format)
-			for list_val in record:
-				col += 1
-				if col in (1,2):
-					worksheet.write(row_cnt+shift_row, col, list_val, region_name_format)
-				else:
-					worksheet.write(row_cnt+shift_row, col, list_val, digital_format)
-			row_cnt += 1
+		df = df[[col for col, _ in columns_map]] 
 
-		# Шифр отчета
-		worksheet.write(0, 6, report_code, title_report_code)
-			
+		# РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёСЏ
+		df["category"] = df["category"].map(CATEGORY_MAP)
+		df["partners"] = df["partners"].apply(
+			lambda x: ",\n".join(map(str, x)) if isinstance(x, list)
+			else str(x) if x
+			else ""
+		)
+		df['date_irr'] = pd.to_datetime(df['date_irr'], errors='coerce')
+		for key in ["cnt_total", "cnt_women"]:
+			df[key] = pd.to_numeric(df[key], errors="coerce").astype('Int64')
+
+		df.rename(columns=dict(columns_map), inplace=True)
+		df.to_excel(writer, sheet_name="РћС‚С‡РµС‚", index=False, startrow=HEADER_ROW)
+		
+		### WORKBOOK ###
+		workbook  = writer.book
+		worksheet = writer.sheets["РћС‚С‡РµС‚"]
+
+		### РќРђРРњР•РќРћР’РђРќРР• РћРўР§Р•РўРђ
+		title_name_report = workbook.add_format({ "align": "left", "font_color": "black", "font_size": "14", "valign": "vcenter", "bold": True	})
+
+		worksheet.set_row(0, 50)
+		worksheet.set_row(1, 30)
+
+		worksheet.write(0, 0, report_name, title_name_report)
+		worksheet.write(0, 6, report_code, title_name_report)
+
+		title_format_it = workbook.add_format({	"align": "right", "valign": "vcenter", "italic": True })
+
 		now = datetime.datetime.now()
 		stop_time = now.strftime("%H:%M:%S")
 
-		worksheet.write(1, 6, f'Дата формирования: {now.strftime("%d.%m.%Y ")}({s_date} - {stop_time})', title_format_it)
-		#
+		worksheet.write(1, 6, f'Р”Р°С‚Р° С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ: {now.strftime("%d.%m.%Y ")}({s_date} - {stop_time})', title_format_it)
 
-	log.info(f'REPORT: {report_code}. Формирование отчета {filename} завершено ({s_date} - {stop_time}). Строк в отчете: {row_cnt+1}')
+
+		### Р—РђР“РћР›РћР’РљР
+		header_format = workbook.add_format({
+			"bold": True,
+			"align": "center",
+			"valign": "vcenter",
+			"border": 1,
+			"bg_color": "#E0F7FF"
+		})
+
+		worksheet.set_row(HEADER_ROW, 50)  
+
+		for col_num, column_name in enumerate(df.columns):
+			worksheet.write(HEADER_ROW, col_num, column_name, header_format)
+			worksheet.set_column(col_num, col_num, 20)
+
+		### Р¤РћР РњРђРў РЇР§Р•Р•Рљ
+		cell_format = workbook.add_format({ "text_wrap": True, "align": "center", "valign": "vcenter", "border": 1, "bg_color": "#f2f2f2" })
+		lalign_format = workbook.add_format({ "align": "left", "valign": "vcenter", "border": 1, "bg_color": "#f2f2f2" })
+		list_format = workbook.add_format({ "align": "left", "valign": "vjustify", "border": 1, "bg_color": "#f2f2f2" })
+		date_format = workbook.add_format({	"num_format": "dd/mm/yyyy", "align": "center", "valign": "vcenter", "border": 1, "bg_color": "#f2f2f2" })
+
+		### РђР’РўРћРЁРР РРќРђ
+		for col_num, column_name in enumerate(df.columns):
+			if column_name == "РџР°СЂС‚РЅРµСЂС‹":
+				worksheet.set_column(col_num, col_num, 50) 
+				continue
+
+			max_len = max(
+				df[column_name].apply(lambda x: len(str(x)) if pd.notna(x) else 0).max(),
+				len(column_name)
+			) + 4
+			worksheet.set_column(col_num, col_num, max_len)
+
+
+		### Р—РђРџРРЎР¬
+		for row_num in range(df.shape[0]):
+
+			worksheet.set_row(row_num, 35)  
+
+			for col_num, column_name in enumerate(df.columns):
+				value = df.iloc[row_num, col_num]
+
+				if column_name == "Р”Р°С‚Р° РїСЂРѕРІРµРґРµРЅРёСЏ РР Р " and pd.notna(value):
+					worksheet.write_datetime(
+							DATA_START_ROW + row_num,
+							col_num,
+							value.to_pydatetime(),
+							date_format
+						)
+				elif column_name in ["Р’СЃРµРіРѕ СѓС‡Р°СЃС‚РЅРёРєРѕРІ", "Р’СЃРµРіРѕ Р¶РµРЅС‰РёРЅ"]:
+					worksheet.write_number(
+							DATA_START_ROW + row_num,
+							col_num,
+							int(value),
+							cell_format
+						)
+				elif column_name in ["Р¤РРћ СЃРїРёРєРµСЂР°", "РСЃРїРѕР»РЅРёС‚РµР»СЊ", "РђРґСЂРµСЃ РР Р "]:
+					worksheet.write(
+							DATA_START_ROW + row_num,
+							col_num,
+							"" if pd.isna(value) else str(value),
+							lalign_format
+						)
+				elif column_name == EXCLUDE_COL:
+					worksheet.write(
+							DATA_START_ROW + row_num,
+							col_num,
+							"" if pd.isna(value) else str(value),
+							list_format
+						)
+				else:
+					worksheet.write(
+							DATA_START_ROW + row_num,
+							col_num,
+							"" if pd.isna(value) else str(value),
+							cell_format
+						)
+
+
+	log.info(f'REPORT: {report_code}. Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РѕС‚С‡РµС‚Р° {filename} Р·Р°РІРµСЂС€РµРЅРѕ ({s_date} - {stop_time}).')
 
 	excel_bytes = output.getvalue()
 	return Response(

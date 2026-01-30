@@ -17,6 +17,7 @@ from view.common_route import *
 
 from util.functions import extract_payload
 from model.functions import list_protocol, set_action
+from reports.report_01 import report_01
 
 log.info("Routes стартовал...")
 
@@ -49,6 +50,9 @@ def try_auto_login():
             user = SSO_User().get_user_by_name(json_user)
             if user:
                 login_user(user)
+            else:
+                log.info(f'---> Try auto login\n\tUSER {ip_addr()} not Registred\n<---')
+                return render_template('login.html')
         else:
             log.info(f'---> Try auto login\n\tUSER {ip_addr()} not Registred\n<---')
             return render_template('login.html')
@@ -63,22 +67,22 @@ def view_root():
     return render_template("index.html")
 
 
-@app.route('/change-style')
-def change_style():
-    if 'style' in session:
-        for style in styles:
-            if style!=session['style']:
-                session['style']=style
-                break
-    else: 
-        session['style']=styles[0]
-    # Получим предыдущую страницу, чтобы на неё вернуться
-    current_page = request.referrer
-    log.debug(f"Set style {session['style']}. Next page: {current_page}")
-    if current_page is not None:
-        return redirect(current_page)
-    else:
-        return redirect(url_for('view_root'))
+# @app.route('/change-style')
+# def change_style():
+#     if 'style' in session:
+#         for style in styles:
+#             if style!=session['style']:
+#                 session['style']=style
+#                 break
+#     else: 
+#         session['style']=styles[0]
+#     # Получим предыдущую страницу, чтобы на неё вернуться
+#     current_page = request.referrer
+#     log.debug(f"Set style {session['style']}. Next page: {current_page}")
+#     if current_page is not None:
+#         return redirect(current_page)
+#     else:
+#         return redirect(url_for('view_root'))
 
 
 @app.route('/language/<string:lang>')
@@ -103,9 +107,10 @@ def uploaded_files(filename):
 @login_required
 def view_list_protocols():
 
-    protocols = list_protocol(g.user.rfbn_id, g.user.boss)
+    protocols = list_protocol(g.user.rfbn_id, g.user.top_level)
+    # protocols = list_protocol('01', 0)
     if len(protocols)==0:
-        return render_template('list_protocols.html', list_protocol=[], error=err)
+        return render_template('list_protocols.html', list_protocol=[], level=g.user.top_level)
 
     SIZE_MAP = { 'large': 'большой', 'medium': 'средний', 'small': 'малый' }
 
@@ -126,9 +131,7 @@ def view_list_protocols():
         else:
             p['path_photo'] = p.get('path_photo') or []
 
-
-    return render_template('list_protocols.html', list_protocols=protocols, rfbn='14', boss='Y')
-    # return render_template('list_protocols.html', list_protocols=protocols, rfbn=g.user.rfbn_id, boss=g.user.boss)
+    return render_template('list_protocols.html', list_protocols=protocols, level=g.user.top_level)
 
 
 @app.route('/protocol/action', methods=['POST'])
@@ -136,9 +139,9 @@ def view_list_protocols():
 def view_action_protocols():
     data = extract_payload()
 
-    args = {'action': data['action'], 'prot_num': data['prot_num'], 'boss': g.user.boss}
+    args = {'action': data['action'], 'prot_num': data['prot_num'], 'top_level': g.user.top_level}
     log.info(f'--->\n\tPROTOCOL ACTION. \n\tARGS: {args}\n\t<---')
-    set_action('VIEW ACTION', 'begin manage.set_action(:action, :prot_num, :boss); end;', args);
+    set_action('VIEW ACTION', 'begin manage.set_action(:action, :prot_num, :top_level); end;', args);
     return {'status': 'success'}, 200
 
 
@@ -147,4 +150,5 @@ def view_action_protocols():
 def view_get_protocol_excel():
     data = extract_payload()
     log.info(f'--->\n\tPROTOCOL ACTION. \n\tARGS: {data}\n\t<---')
+    return report_01()
 

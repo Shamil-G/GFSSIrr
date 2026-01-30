@@ -63,7 +63,6 @@ def select(stmt, params=None):
                 return results
             except oracledb.DatabaseError as e:
                 error, = e.args
-                status = 'fail'
                 err_message = f'STMT: {stmt}\nPARAMS: {params}\n\t{error.code} : {error.message}'
                 log.error(f"------select------> ERROR\n{err_message}\n")
                 return []
