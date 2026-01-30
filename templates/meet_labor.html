@@ -76,7 +76,7 @@
 
         <div class="form-row">
             <label for="category-subject">{{ res_value('CATEGORY_SUBJECT') }}</label>
-            <select id="category-subject" class="input_s" style="max-width: 188px" name="business_category" required>
+            <select id="category-subject" class="input_s" style="max-width: 188px" name="category" required>
                 <option value="">{{ res_value('CATEGORY_SELECT') }}</option>
                 <option value="large" {% if "large" in data.category %}selected{% endif %}>{{ res_value('CATEGORY_LARGE') }}</option>
                 <option value="medium" {% if "medium" in data.category %}selected{% endif %}>{{ res_value('CATEGORY_MIDDLE') }}</option>
@@ -98,10 +98,10 @@
         <div class="form-row">
             <span>{{ res_value('PHOTO_REPORT') }}</span>
             <div style="display: flex; flex-direction: column; gap: 6px">
-                <label for="photo-report" class="button" style="max-width: 220px">
+                <label for="path_photo" class="button" style="max-width: 220px">
                     📷 {{ res_value('PHOTO_SELECT') }}
                 </label>
-                <input type="file" id="photo-report" name="photo_report" accept="image/*" multiple hidden>
+                <input type="file" id="path_photo" name="path_photo" accept="image/*" multiple hidden>
                 <div id="photo-file-names" class="file-names"></div>
             </div>
         </div>

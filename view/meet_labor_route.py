@@ -36,28 +36,31 @@ def view_meet_labor_pension():
         partners = request.form.getlist('partners')
         photos = files.getlist("path_photo")
 
+        log.info(f"-->POST. MEET LABOR. PARTNERS: {partners}\n\tPHOTOS: {photos}\n\tFILES: {files}\n<---")
+
         if len(partners)<1:
             message=f"Необходимо выбрать не менее чем одну организацию. "
         if len(organization_name)==0 and len(bin)==0:
             message=f'{message}Необходимо выбрать либо адрес проведения ИРР, либо организацию. '
-        if len(photos) < 2: 
+        if len(photos) == 0: 
             message=f"{message}{'\n' if message else ''}Необходимо выбрать не менее 1 файла."
 
         if len(message)>0:
             data["partners"] = partners
             data['date_irr']=datetime.strptime(data['date_irr'], "%Y-%m-%d").date()
 
+            log.info(f'POST. MEET LABOR. \n\tERROR: {message}')
+
             return render_template('meet_labor.html', regions=list_regions, districts=list_rayons, top=g.user.top_level, message=message, list_partners=list_partners, data=data)
         else:
 
             list_path=upload_files(rfbn_id, photos)
-            log.info(f'POST. MEET LABOR\n\tList_files_path: {list_path}')
 
             data['path_photo'] = json.dumps(list_path, ensure_ascii=False)
             data['partners'] = json.dumps(partners, ensure_ascii=False)
             data['employee'] = g.user.fio            
             
-            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['photo_path']}\n\tpartners: {data['partners']}')
+            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['path_photo']}\n\tpartners: {data['partners']}')
 
             add_protocol(data)
 

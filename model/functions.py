@@ -62,6 +62,7 @@ def add_protocol(data: dict):
 
     if 'organization_name' in data:
         data.pop('organization_name')
+
     plsql_execute_s('ADD_PROTOCOL', cmd, data)
 
 

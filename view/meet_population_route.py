@@ -31,15 +31,17 @@ def view_meet_poulation_pension():
         partners = request.form.getlist('partners')
         photos = files.getlist("path_photo")
 
-        log.info(f"request.form.getlist('partners'): {partners}")
+        log.info(f"-->\n\tPOST. MEET POPULATION. PARTNERS: {partners}\n\tPHOTOS: {photos}\n\tFILES: {files}\n<---")
         if len(partners)<1:
             message="Необходимо выбрать не менее чем одну организацию"
-        if len(photos) < 1: 
+        if len(photos) == 0: 
             message=f"{message}{'\n' if message else ''}\nНеобходимо выбрать не менее 1 файла"
 
         if len(message)>0:
             data["partners"] = partners
             data['date_irr']=datetime.strptime(data['date_irr'], "%Y-%m-%d").date()
+
+            log.info(f'POST. MEET POPULATION. \n\tERROR: {message}')
 
             return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_level, message=message, list_partners=list_partners, data=data)
         else:
@@ -49,7 +51,7 @@ def view_meet_poulation_pension():
             data['partners'] = json.dumps(partners, ensure_ascii=False)
             data['employee'] = g.user.fio            
 
-            log.info(f'POST. MEET LABOR\n\tphoto_path: {data['path_photo']}\n\tdata.partners: {data['partners']}\n\tpartners: {partners}')
+            log.info(f'POST. MEET POPULATION\n\tphoto_path: {data['path_photo']}\n\tdata.partners: {data['partners']}\n\tpartners: {partners}')
 
             add_protocol(data)
 

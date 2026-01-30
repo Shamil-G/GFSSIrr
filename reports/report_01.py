@@ -8,23 +8,6 @@ from flask import Response
 import io
 
 
-report_name = 'Проведение ИРР'
-report_code = 'PROT_01'
-
-HEADER_ROW = 2
-DATA_START_ROW = HEADER_ROW + 1
-EXCLUDE_COL = "Партнеры"
-LINE_HEIGHT = 15
-
-
-# def get_select():
-# 	stmt_report = f"""
-# 		select * from list_protocol order by district, date_irr
-# 	"""
-# 	log.debug(f"SQL: {stmt_report}")
-
-# 	return stmt_report
-
 def get_select():
     return """
         select
@@ -44,72 +27,58 @@ def get_select():
             meeting_place as "Адрес ИРР",
             partners as "Партнеры"
         from list_protocol l
-		where l.status=2
-		and	  l.rfbn_id=case when :rfbn='00' then l.rfbn_id else :rfbn end
+		where l.rfbn_id=case when :rfbn='00' then l.rfbn_id else :rfbn end
+		--and l.status=2
         order by district, date_irr
     """
 
+report_name = 'Проведение ИРР'
+report_code = 'PROT_01'
 
-# def format_worksheet(worksheet, common_format):
-# 	worksheet.set_row(0, 24)
-# 	worksheet.set_row(1, 24)
-
-# 	worksheet.set_column(0, 0, 5)
-# 	worksheet.set_column(1, 1, 44)
-# 	worksheet.set_column(2, 2, 32)
-
-# 	worksheet.write(2, 0, '№', common_format)
-# 	worksheet.write(2, 1, 'Департамент', common_format)
-# 	worksheet.write(2, 2, 'Сотрудник', common_format)
+HEADER_ROW = 2
+DATA_START_ROW = HEADER_ROW + 1
+EXCLUDE_COL = "Партнеры"
+LINE_HEIGHT = 15
 
 
 def report_01(rfbn_id: str, filename=f"rep_{report_code}.xlsx"):
 	s_date = datetime.datetime.now().strftime("%H:%M:%S")
 	log.info('We are in report_01 !')
 	output = io.BytesIO()
+
+	params = {'rfbn': rfbn_id[:2]}
+	records = select(get_select(),params)
+	log.info(f'\tPARAMS: {params}\n\tRECORDS: {records}')
+
+	if not records:
+		with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
+			workbook  = writer.book
+			worksheet = workbook.add_worksheet("Отчет")
+			worksheet.write(0, 0, "Нет данных для отображения")
+		excel_bytes = output.getvalue()
+    
+		return Response(
+			excel_bytes,
+			mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+			headers={"Content-Disposition": f"attachment; filename={filename}"}
+		)
+
 	with pd.ExcelWriter(output, engine="xlsxwriter") as writer:
-
-		columns_map = [
-			("prot_num",        "Номер протокола"),
-			("date_irr",        "Дата проведения ИРР"),
-			("district",        "Район"),
-			("cnt_total",       "Всего участников"),
-			("cnt_women",       "Всего женщин"),
-			("bin",             "БИН"),
-			("meeting_format",  "Формат встречи"),
-			("category",        "Категория"),
-			("speaker",         "ФИО спикера"),
-			("employee",        "Исполнитель"),
-			("meeting_place",   "Адрес ИРР"),
-			("partners",        "Партнеры"),
-		]
-
-		CATEGORY_MAP = {
-			"large": "Крупный",
-			"medium": "Средний",
-			"small": "Малый",
-		}
 		
-		params = {'rfbn_id': rfbn_id}
-		records = select(get_select(),params)
-		log.info('')
-
 		df = pd.DataFrame.from_records(records)
 
-		df = df[[col for col, _ in columns_map]] 
 
 		# Преобразования
-		df["category"] = df["category"].map(CATEGORY_MAP)
-		df["partners"] = df["partners"].apply(
-			lambda x: ",\n".join(map(str, x)) if isinstance(x, list)
-			else str(x) if x
-			else ""
-		)
-		df['date_irr'] = pd.to_datetime(df['date_irr'], errors='coerce')
-		for key in ["cnt_total", "cnt_women"]:
-			df[key] = pd.to_numeric(df[key], errors="coerce").astype('Int64')
+		# df["Партнеры"] = df["Партнеры"].apply(
+		# 	lambda x: ",\n".join(map(str, x)) if isinstance(x, list)
+		# 	else str(x) if x
+		# 	else ""
+		# )
+		# df['Дата проведения ИРР'] = pd.to_datetime(df['Дата проведения ИРР'], errors='coerce')
+		# for key in ["Всего участников", "Всего женщин"]:
+		# 	df[key] = pd.to_numeric(df[key], errors="coerce").astype('Int64')
 
-		df.rename(columns=dict(columns_map), inplace=True)
+
 		df.to_excel(writer, sheet_name="Отчет", index=False, startrow=HEADER_ROW)
 		
 		### WORKBOOK ###
@@ -176,35 +145,35 @@ def report_01(rfbn_id: str, filename=f"rep_{report_code}.xlsx"):
 				value = df.iloc[row_num, col_num]
 
 				if column_name == "Дата проведения ИРР" and pd.notna(value):
-					worksheet.write_datetime(
+						worksheet.write_datetime(
 							DATA_START_ROW + row_num,
 							col_num,
 							value.to_pydatetime(),
 							date_format
 						)
 				elif column_name in ["Всего участников", "Всего женщин"]:
-					worksheet.write_number(
+						worksheet.write_number(
 							DATA_START_ROW + row_num,
 							col_num,
 							int(value),
 							cell_format
 						)
 				elif column_name in ["ФИО спикера", "Исполнитель", "Адрес ИРР"]:
-					worksheet.write(
+						worksheet.write(
 							DATA_START_ROW + row_num,
 							col_num,
 							"" if pd.isna(value) else str(value),
 							lalign_format
 						)
 				elif column_name == EXCLUDE_COL:
-					worksheet.write(
+						worksheet.write(
 							DATA_START_ROW + row_num,
 							col_num,
 							"" if pd.isna(value) else str(value),
 							list_format
 						)
 				else:
-					worksheet.write(
+						worksheet.write(
 							DATA_START_ROW + row_num,
 							col_num,
 							"" if pd.isna(value) else str(value),
