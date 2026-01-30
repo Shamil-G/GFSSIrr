@@ -34,7 +34,7 @@ def view_meet_poulation_pension():
         log.info(f"-->\n\tPOST. MEET POPULATION. PARTNERS: {partners}\n\tPHOTOS: {photos}\n\tFILES: {files}\n<---")
         if len(partners)<1:
             message="Необходимо выбрать не менее чем одну организацию"
-        if len(photos) == 0: 
+        if not any(p.filename for p in photos): 
             message=f"{message}{'\n' if message else ''}\nНеобходимо выбрать не менее 1 файла"
 
         if len(message)>0:

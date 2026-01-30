@@ -49,12 +49,12 @@
 
         <div class="form-row">
             <label for="speaker-fio">{{ res_value('SPEAKER_FIO') }}</label>
-            <input id="speaker-fio" class="input_s" type="text" name="speaker" list="speakers" value="{{ data.speakero }}" required>
+            <input id="speaker-fio" class="input_s" type="text" name="speaker" value="{{ data.speaker }}" required>
         </div>
 
         <div class="form-row">
             <label for="meeting-format">{{ res_value('MEETING_FORMAT') }}</label>
-            <select id="meeting-format" class="input_s" style="max-width: 170px" name="meeting_format" value="{{ data.meeting_format }}" required>
+            <select id="meeting-format" class="input_s" style="max-width: 176px" name="meeting_format" value="{{ data.meeting_format }}" required>
                 <option value="">{{ res_value('SELECT_FORMAT') }}</option>
                 <option value="offline" {% if "offline" in data.meeting_format %}selected{% endif %}>{{ res_value('ON_PLACE_FORMAT') }}</option>
                 <option value="online" {% if "online" in data.meeting_format %}selected{% endif %}>{{ res_value('ON_LINE_FORMAT') }}</option>
@@ -76,7 +76,7 @@
 
         <div class="form-row">
             <label for="category-subject">{{ res_value('CATEGORY_SUBJECT') }}</label>
-            <select id="category-subject" class="input_s" style="max-width: 188px" name="category" required>
+            <select id="category-subject" class="input_s" style="max-width: 192px" name="category" required>
                 <option value="">{{ res_value('CATEGORY_SELECT') }}</option>
                 <option value="large" {% if "large" in data.category %}selected{% endif %}>{{ res_value('CATEGORY_LARGE') }}</option>
                 <option value="medium" {% if "medium" in data.category %}selected{% endif %}>{{ res_value('CATEGORY_MIDDLE') }}</option>
@@ -92,7 +92,7 @@
 
         <div class="form-row">
             <label for="name-organization">{{ res_value('NAME_ORGANIZATION') }}</label>
-            <input id="name-organization" class="input_s" type="text" name="organization_name" style="background: transparent; border: none; outline: none; box-shadow: none;" value="{{ data.organization_name }}">
+            <input id="name-organization" class="input_s" type="text" name="organization_name" style="background: transparent; border: none; outline: none; box-shadow: none; min-width: 640px" value="{{ data.organization_name }}">
         </div>
 
         <div class="form-row">

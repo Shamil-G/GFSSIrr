@@ -36,13 +36,13 @@ def view_meet_labor_pension():
         partners = request.form.getlist('partners')
         photos = files.getlist("path_photo")
 
-        log.info(f"-->POST. MEET LABOR. PARTNERS: {partners}\n\tPHOTOS: {photos}\n\tFILES: {files}\n<---")
+        log.info(f"-->POST. MEET LABOR. PARTNERS: {partners}\n\tPHOTOS: {len(photos)}:{photos}\n\tFILES: {files}\n<---")
 
         if len(partners)<1:
             message=f"Необходимо выбрать не менее чем одну организацию. "
         if len(organization_name)==0 and len(bin)==0:
             message=f'{message}Необходимо выбрать либо адрес проведения ИРР, либо организацию. '
-        if len(photos) == 0: 
+        if  not any(p.filename for p in photos): 
             message=f"{message}{'\n' if message else ''}Необходимо выбрать не менее 1 файла."
 
         if len(message)>0:
