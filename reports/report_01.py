@@ -10,30 +10,31 @@ import io
 
 def get_select():
     return """
-        select
-            prot_num as "Номер протокола",
-            date_irr as "Дата ИРР",
-            l.rfbn_id as  "Код области",
+		select
+			prot_num as "Номер протокола",
+			date_irr as "Дата ИРР",
+			l.rfbn_id as  "Код области",
 			b2.name as "Область",
-            b.name as "Район",
-            cnt_total as "Всего участников",
-            cnt_women as "Всего женщин",
-            bin as "БИН",
-            meeting_format as "Формат встречи",
-            case when category='large' then 'Крупный'
-			     when category='middle' then 'Средний'
-			     when category='small' then 'Малый'
-				 else '' end  as "Категория бизнеса",
-            speaker as "ФИО спикера",
-            employee as "Исполнитель",
-            meeting_place as "Адрес ИРР",
-            partners as "Партнеры"
-        from list_protocol l, loader.branch b, loader.branch b2
+			b.name as "Район",
+			cnt_total as "Всего участников",
+			cnt_women as "Всего женщин",
+			bin as "БИН",
+			(select p_name from loader.pmpd_pay_doc pd where pd.p_rnn=l.bin and rownum=1) as "Наименование предприятия",
+			meeting_format as "Формат встречи",
+			case when category='large' then 'Крупный'
+			when category='middle' then 'Средний'
+			when category='small' then 'Малый'
+			else '' end  as "Категория бизнеса",
+			speaker as "ФИО спикера",
+			employee as "Исполнитель",
+			meeting_place as "Адрес ИРР",
+			partners as "Партнеры"
+		from list_protocol l, loader.branch b, loader.branch b2
 		where l.rfbn_id=case when :rfbn='00' then l.rfbn_id else :rfbn end
 		and  l.district=b.rfbn_id
 		and  l.rfbn_id||'00'=b2.rfbn_id
 		and l.status=2
-        order by prot_num
+		order by prot_num
     """
 
 report_name = 'Проведение ИРР'
@@ -78,10 +79,10 @@ def report_01(rfbn_id: str, filename=f"rep_{report_code}.xlsx"):
 		##
 		list_name_number = ['Всего участников', 'Всего женщин']
 		list_name_date = ['Дата ИРР']
-		list_name_text = ["Область","Район","ФИО спикера", "Исполнитель", "Адрес ИРР"]
+		list_name_text = ["Наименование предприятия", "Область","Район","ФИО спикера", "Исполнитель", "Адрес ИРР"]
 		list_name_text_list = ["Партнеры"]
 		list_name_text_center = ["Код области", "БИН", "Категория бизнеса", "Номер протокола", "Формат встречи"]
-		list_column_width =[11,12,10,45,45,12,12,14,12,12,30,40,50,30]
+		list_column_width =[11,12,10,45,45,12,12,14, 60, 12,12,30,40,50,30]
 		# Пишем шапку и указываем ширину колонок
 		for col_num, column_name in enumerate(records[0]):
 			worksheet.write(HEADER_ROW, col_num, column_name, header_format)
