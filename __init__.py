@@ -22,6 +22,8 @@ print('START __INIT__.py')
 
 app.config['SESSION_PERMANENT'] = False
 app.config['PERMANENT_SESSION_LIFETIME'] = 36000
+# Ограничение на размер загружаемых файлов - 10 МБ
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 
 config = ConfigParser()
 config.read('db_config.ini')
