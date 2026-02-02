@@ -32,8 +32,8 @@ def get_select():
 		where l.rfbn_id=case when :rfbn='00' then l.rfbn_id else :rfbn end
 		and  l.district=b.rfbn_id
 		and  l.rfbn_id||'00'=b2.rfbn_id
-		--and l.status=2
-        order by district, date_irr
+		and l.status=2
+        order by prot_num
     """
 
 report_name = 'Проведение ИРР'
