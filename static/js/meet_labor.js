@@ -55,9 +55,9 @@ export function bindRegionDistrict() {
 
 
 export function bindPhotoReport() {
-    const input = document.getElementById("photo-report");
+    const input = document.getElementById("path_photo");
     const output = document.getElementById("photo-file-names");
-
+    // console.log("input: ", input, "output: ", output);
     if (!input || !output) return;
 
     input.addEventListener("change", () => {
