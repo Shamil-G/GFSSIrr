@@ -54,6 +54,11 @@ def view_meet_poulation_pension():
             log.info(f'POST. MEET POPULATION\n\tphoto_path: {data['path_photo']}\n\tdata.partners: {data['partners']}\n\tpartners: {partners}')
 
             add_protocol(data)
+            data['meeting_place']=''
+            data['date_irr']=''
+
+            message=f"Протокол успешно сохранен!"
+
 
     # log.info(f"------->\n\tVIEW MEET POPULATION\n\tRFBN_ID: {g.user.rfbn_id}\n\ttop_level: {g.user.top_level}\n<-------")
     return render_template('meet_population.html', regions=list_regions, districts=list_rayons, top=g.user.top_level, message=message, list_partners=list_partners, data=data)

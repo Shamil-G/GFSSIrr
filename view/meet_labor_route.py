@@ -64,5 +64,10 @@ def view_meet_labor_pension():
 
             add_protocol(data)
 
+            data['bin']=''
+            data['date_irr']=''
+
+            message=f"Протокол успешно сохранен!"
+
     return render_template('meet_labor.html', regions=list_regions, districts=list_rayons, top=g.user.top_level, message=message, list_partners=list_partners, data=data)
 
