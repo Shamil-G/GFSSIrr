@@ -5,6 +5,8 @@ import os
 from werkzeug.utils import secure_filename
 from datetime import datetime
 from app_config import UPLOAD_DIR
+import re
+
 
 def extract_payload():
     if request.method == 'GET':
@@ -34,6 +36,14 @@ def extract_payload():
             return {}
 
 
+
+
+def sanitize_filename(name: str) -> str:
+    # Разрешаем кириллицу, латиницу, цифры, пробелы, дефис, подчёркивание, точку
+    name = re.sub(r'[^0-9A-Za-zА-Яа-яЁё ._-]', '', name)
+    return name.strip()
+        
+
 def upload_files(rfbn_id, files):
     yr = datetime.now().year
     UPLOAD_PATH = f"{UPLOAD_DIR}/{yr}/{rfbn_id}"
@@ -44,7 +54,7 @@ def upload_files(rfbn_id, files):
     list_path = []
     for f in files:
         if f.filename:
-            filename = secure_filename(f.filename)
+            filename = sanitize_filename(f.filename)
             path = os.path.join(UPLOAD_PATH, filename)
             list_path.append(path)
             f.save(path)

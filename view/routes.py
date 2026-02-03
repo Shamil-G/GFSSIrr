@@ -67,24 +67,6 @@ def view_root():
     return render_template("index.html")
 
 
-# @app.route('/change-style')
-# def change_style():
-#     if 'style' in session:
-#         for style in styles:
-#             if style!=session['style']:
-#                 session['style']=style
-#                 break
-#     else: 
-#         session['style']=styles[0]
-#     # Получим предыдущую страницу, чтобы на неё вернуться
-#     current_page = request.referrer
-#     log.debug(f"Set style {session['style']}. Next page: {current_page}")
-#     if current_page is not None:
-#         return redirect(current_page)
-#     else:
-#         return redirect(url_for('view_root'))
-
-
 @app.route('/language/<string:lang>')
 def set_language(lang):
     log.debug(f"Set language. LANG: {lang}, предыдущий язык: {session['language']}")
