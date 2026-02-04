@@ -39,9 +39,9 @@ def view_meet_labor_pension():
         log.info(f"-->POST. MEET LABOR. PARTNERS: {partners}\n\tPHOTOS: {len(photos)}:{photos}\n\tFILES: {files}\n<---")
 
         if len(partners)<1:
-            message=f"Необходимо выбрать не менее чем одну организацию. "
+            message=f"Необходимо выбрать не менее чем одну организацию-партнера. "
         if len(organization_name)==0 and len(bin)==0:
-            message=f'{message}Необходимо выбрать либо адрес проведения ИРР, либо организацию. '
+            message=f'{message}Необходимо выбрать БИН организации. '
         if  not any(p.filename for p in photos): 
             message=f"{message}{'\n' if message else ''}Необходимо выбрать не менее 1 файла."
 

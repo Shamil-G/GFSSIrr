@@ -22,7 +22,7 @@ def get_select():
 			(select p_name from loader.pmpd_pay_doc pd where pd.p_rnn=l.bin and rownum=1) as "Наименование предприятия",
 			meeting_format as "Формат встречи",
 			case when category='large' then 'Крупный'
-			when category='middle' then 'Средний'
+			when category='medium' then 'Средний'
 			when category='small' then 'Малый'
 			else '' end  as "Категория бизнеса",
 			speaker as "ФИО спикера",
