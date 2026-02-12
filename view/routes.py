@@ -100,7 +100,6 @@ def view_change_list_protocols():
         return []
 
     period = data['period']
-    log.info(f'--->\nLIST-PROTOCOLS. DATA: {data}\n<---')
     params = {'rfbn_id': g.user.rfbn_id[0:2], 'top_level': g.user.top_level, 'period': period} 
     protocols = list_protocol(params)
     # protocols = list_protocol('01', 0)

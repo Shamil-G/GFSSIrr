@@ -52,7 +52,7 @@ def report_01(params, filename=f"rep_{report_code}.xlsx"):
 	output = io.BytesIO()
 
 	records = select(get_select(),params)
-	log.info(f'\tPARAMS: {params}\n\tRECORDS: {records}')
+	log.debug(f'REPORT_01\tPARAMS: {params}\n\tRECORDS: {records}')
 
 	with xlsxwriter.Workbook(output, {'in_memory': True}) as workbook:
 		worksheet = workbook.add_worksheet("Отчет")
