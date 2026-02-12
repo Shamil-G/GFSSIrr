@@ -30,7 +30,8 @@ def get_select():
 			meeting_place as "Адрес ИРР",
 			partners as "Партнеры"
 		from list_protocol l, loader.branch b, loader.branch b2
-		where l.rfbn_id=case when :rfbn='00' then l.rfbn_id else :rfbn end
+		where l.rfbn_id=case when :rfbn_id='00' then l.rfbn_id else :rfbn_id end
+		and	  to_char(l.date_irr,'YYYY-MM')=:period
 		and  l.district=b.rfbn_id
 		and  l.rfbn_id||'00'=b2.rfbn_id
 		and l.status=2
@@ -46,11 +47,10 @@ EXCLUDE_COL = "Партнеры"
 LINE_HEIGHT = 15
 
 
-def report_01(rfbn_id: str, filename=f"rep_{report_code}.xlsx"):
+def report_01(params, filename=f"rep_{report_code}.xlsx"):
 	s_date = datetime.datetime.now().strftime("%H:%M:%S")
 	output = io.BytesIO()
 
-	params = {'rfbn': rfbn_id[:2]}
 	records = select(get_select(),params)
 	log.info(f'\tPARAMS: {params}\n\tRECORDS: {records}')
 

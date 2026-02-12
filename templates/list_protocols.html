@@ -10,10 +10,16 @@
 
 {% block body %}
 <div style="display: flex; padding: 4px 0px 4px 10px; align-items: center; font-size: 18px;">
-    <div style="position: relative; display: inline-block;">
-        <input type="month" name="date_protocol" class="button"
-               style="padding: 4px 10px; font-weight: bold; appearance: none; -webkit-appearance: none;">
-        <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none;"><i class="fas fa-calendar-alt"></i></span>
+    <div data-zone="protocol">
+        <div style="position: relative; display: inline-block;">
+            <input type="month"
+                   name="date_protocol"
+                   class="button"
+                   data-role="save-change-form"
+                   data-target-id="zoneTableProtocol"
+                   style="padding: 4px 10px; font-weight: bold; appearance: none; -webkit-appearance: none;">
+            <span style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); color: #666; pointer-events: none;"><i class="fas fa-calendar-alt"></i></span>
+        </div>
     </div>
     <a class="button" href="/get_protocol_excel"
        style="margin-left: 16px; font-weight: bold;">
@@ -21,144 +27,7 @@
         {{ res_value('EXCEL') }}
     </a>
 </div>
-<div style="overflow: auto" class="scroll-x-y">
-    <table class="table table-bordered table-hover table-sm">
-        <thead class="table-light">
-            <tr>
-                <th>{{ res_value('PROTOCOL_NUM') }}</th>
-                <th>{{ res_value('PROTOCOL_STATUS') }}</th>
-                <th>{{ res_value('PROTOCOL_RAYON') }}</th>
-                <th>{{ res_value('PROTOCOL_RAYON_NAME') }}</th>
-                <th>{{ res_value('PROTOCOL_COUNT') }}</th>
-                <th>{{ res_value('PROTOCOL_SPEAKER') }}</th>
-                <th>{{ res_value('PROTOCOL_FORMAT') }}</th>
-                <th>{{ res_value('PROTOCOL_ADDRESS') }}</th>
-                <th>{{ res_value('PROTOCOL_PARTNERS') }}</th>
-                <th>{{ res_value('PROTOCOL_ORG') }}</th>
-                <th>{{ res_value('PROTOCOL_CATEGORY') }}</th>
-                <th>{{ res_value('PROTOCOL_PHOTO') }}</th>
-                <th>{{ res_value('PROTOCOL_RESPONS') }}</th>
-            </tr>
-        </thead>
-
-        <tbody>
-            {% for p in list_protocols %}
-            <tr>
-                <td>{{ p.prot_num }}</td>
-
-                <td>
-                    <span>{{ level }}:{{p.status}}</span>
-                    {% if p.status==0 %}
-                        {% if level == 2 or level == 0 %}
-                            <span>{{ res_value('PROTOCOL_ON_APPROVE') }}</span>
-                        {% endif %}
-                        {% if level == 1 %}
-                            <!-- Согласовать -->
-                            <button style="border: none; padding: 8px 2px 0px 0px; background: inherit;"
-                                    data-action="approve"
-                                    data-prot="{{ p.prot_num }}"
-                                    onmouseover="this.style.background='#E8FCD9'"
-                                    onmouseout="this.style.background='inherit'"
-                                    title="{{ res_value('PROTOCOL_APPROVE') }}">
-                                <img src="/static/img/icons8-approve-48.png" alt="approve" style="width:32px; height:32px;">
-                            </button>
-                            <!-- Доработать -->
-                            <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
-                                    data-action="finalize"
-                                    data-prot="{{ p.prot_num }}"
-                                    onmouseover="this.style.background='#FFF6C8'"
-                                    onmouseout="this.style.background='inherit'"
-                                    title="{{ res_value('PROTOCOL_REWORK') }}">
-                                <img src="/static/img/icons8-fix-48.png" alt="finalize" style="width:32px; height:32px;">
-                            </button>
-                            <!-- Удалить -->
-                            <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
-                                    data-action="remove"
-                                    data-prot="{{ p.prot_num }}"
-                                    onmouseover="this.style.background='#FFC2C2'"
-                                    onmouseout="this.style.background='inherit'"
-                                    title="{{ res_value('PROTOCOL_REFUSE') }}">
-                                <img src="/static/img/icons8-delete-48.png" alt="remove" style="width:32px; height:32px;">
-                            </button>
-                        {% endif %}
-                    {% endif %}
-
-                    {% if p.status==1 %}
-                        {% if level==2 or level==1 %}
-                            <span>{{ res_value('PROTOCOL_ON_REWORK') }}</span>
-                        {% endif %}
-                        {% if level==0 %}
-                            <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
-                                    onclick="window.location.href='/edit-protocol/{{ p.prot_num }}'"
-                                    data-prot="{{ p.prot_num }}"
-                                    onmouseover="this.style.background='#FFF6C8'"
-                                    onmouseout="this.style.background='inherit'"
-                                    title="{{ res_value('PROTOCOL_REWORK') }}">
-                                <img src="/static/img/icons8-fix-48.png" alt="finalize" style="width:32px; height:32px;">
-                            </button>
-                        {% endif %}
-                    {% endif %}
-
-                    {% if p.status==2 %}
-                        {% if level==2 %}
-                            <button style="border: none; padding: 8px 2px 0px 0px; background: inherit"
-                                    onclick="window.location.href='/protocol/edit-form/{{ p.prot_num }}'"
-                                    data-action="edit"
-                                    data-prot="{{ p.prot_num }}"
-                                    onmouseover="this.style.background='#FFF6C8'"
-                                    onmouseout="this.style.background='inherit'"
-                                    title="{{ res_value('PROTOCOL_REWORK') }}">
-                                <img src="/static/img/icons8-fix-48.png" alt="finalize" style="width:32px; height:32px;">
-                            </button>
-                        {% endif %}
-                        {% if level==1 or level==0 %}
-                            <span>{{ res_value('APPROVED_PROTOCOL') }}</span>
-                        {% endif %}
-                    {% endif %}
-                </td>
-
-
-                <td>{{ p.district }}</td>
-                <td style="text-align: left;">{{ p.name }}</td>
-
-                <td>
-                    {{ p.cnt_total }} / {{ p.cnt_women }}
-                </td>
-
-                <td>{{ p.speaker }}</td>
-                <td>{{ p.meeting_format }}</td>
-                <td style="text-align: left;">{{ p.meeting_place }}</td>
-
-                <td style="text-align: left;">
-                    {% if p.partners %}
-                    <ul style="padding-left: 0; margin-left: 0; list-style-position: inside;">
-                        {% for partner in p.partners %}
-                        <li>{{ partner }}</li>
-                        {% endfor %}
-                    </ul>
-                    {% else %}
-                    ''
-                    {% endif %}
-                </td>
-
-                <td style="text-align: left;">{{ p.org_name }}</td>
-                <td>{{ p.category }}</td>
-
-                <td>
-                    {% if p.path_photo %}
-                    {% for photo in p.path_photo %}
-                    <a href="/{{ photo }}" target="_blank">📷</a>
-                    {% endfor %}
-                    {% else %}
-                    —
-                    {% endif %}
-                </td>
-
-                <td>{{ p.employee }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<hr style="border: none; border-top: 1px solid #ccc; margin: 1px 0;">
+<div id="zoneTableProtocol" style="overflow: auto" class="scroll-x-y"></div>
 <script type="module" data-page="listProtocols" src="/static/js/protocol.js"></script>
 {% endblock %}

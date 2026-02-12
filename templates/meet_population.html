@@ -54,7 +54,7 @@
 
         <div class="form-row">
             <label for="meeting-format">{{ res_value('MEETING_FORMAT') }}</label>
-            <select id="meeting-format" class="input_s" style="max-width: 170px" name="meeting_format" required>
+            <select id="meeting-format" class="input_s" style="max-width: 176px" name="meeting_format" required>
                 <option value="">{{ res_value('SELECT_FORMAT') }}</option>
                 <option value="offline" {% if "offline" in data.meeting_format %}selected{% endif %}>{{ res_value('ON_PLACE_FORMAT') }}</option>
                 <option value="online" {% if "online" in data.meeting_format %}selected{% endif %}>{{ res_value('ON_LINE_FORMAT') }}</option>

@@ -88,7 +88,7 @@ def update_protocol(data: dict):
     plsql_execute_s('ADD_PROTOCOL', cmd, data)
 
 
-def list_protocol(rfbn, top_level):
+def list_protocol(params):
     cmd="""
         select prot_num, 
                l.status,
@@ -113,12 +113,11 @@ def list_protocol(rfbn, top_level):
         and   l.rfbn_id = 
                 case when :top_level=2
                      then l.rfbn_id
-                     else substr(:rfbn,1,2)
+                     else substr(:rfbn_id,1,2)
                 end
+        and to_char(date_irr, 'YYYY-MM')=:period
         order by status asc, date_irr desc               
     """
-
-    params = { 'rfbn': rfbn[0:2], 'top_level': top_level }
     protocols = select(cmd, params)
     for p in protocols:
         for key, value in p.items(): 

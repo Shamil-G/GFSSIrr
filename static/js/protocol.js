@@ -1,4 +1,5 @@
-import { bindRegionDistrict,  bindPhotoReport, setTheme } from '/static/js/meet_labor.js';
+//import { bindRegionDistrict,  bindPhotoReport, setTheme } from '/static/js/meet_labor.js';
+import { SaveChangeFormBinder } from '/static/js/saveChangeFormBinder.js';
 
 
 document.addEventListener('click', e => {
@@ -14,6 +15,14 @@ document.addEventListener('click', e => {
 
     callProtocolAction(action, protNum);
 });
+
+document.addEventListener('DOMContentLoaded', () => {
+    const zone = document.querySelector('[data-zone="protocol"]');
+    if (zone) {
+        SaveChangeFormBinder.attachAll(zone);
+    }
+});
+
 
 function callProtocolAction(action, protNum) {
     fetch('/protocol/action', {

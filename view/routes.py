@@ -85,22 +85,33 @@ def uploaded_files(filename):
     return send_from_directory('uploads', filename)
 
 
-@app.route('/list-protocols')
+@app.route('/list-protocols', methods=['GET','POST'])
 @login_required
 def view_list_protocols():
+    return render_template('list_protocols.html')
 
-    protocols = list_protocol(g.user.rfbn_id, g.user.top_level)
+
+@app.route('/change-list-protocols', methods=['POST'])
+@login_required
+def view_change_list_protocols():
+    session['period']=''
+    data = extract_payload()
+    if 'period' not in data:
+        return []
+
+    period = data['period']
+    log.info(f'--->\nLIST-PROTOCOLS. DATA: {data}\n<---')
+    params = {'rfbn_id': g.user.rfbn_id[0:2], 'top_level': g.user.top_level, 'period': period} 
+    protocols = list_protocol(params)
     # protocols = list_protocol('01', 0)
     if len(protocols)==0:
-        return render_template('list_protocols.html', list_protocol=[], level=g.user.top_level)
+        render_template('fragments/_fragment_list_protocols.html', list_protocols=[], level=g.user.top_level)
 
+    session['period']=period
     SIZE_MAP = { 'large': 'большой', 'medium': 'средний', 'small': 'малый' }
 
     log.debug(f'list-protocols. {len(protocols)} : {protocols}')
     for p in protocols:
-        for key, value in p.items(): 
-            if value is None: p[key] = ''
-        
         p['category'] = SIZE_MAP.get(p.get('category'), p.get('category') or '')
 
         if isinstance(p.get('partners'), str):
@@ -113,7 +124,7 @@ def view_list_protocols():
         else:
             p['path_photo'] = p.get('path_photo') or []
 
-    return render_template('list_protocols.html', list_protocols=protocols, level=g.user.top_level)
+    return render_template('fragments/_fragment_list_protocols.html', list_protocols=protocols, level=g.user.top_level)
 
 
 @app.route('/protocol/action', methods=['POST'])
@@ -130,7 +141,6 @@ def view_action_protocols():
 @app.route('/get_protocol_excel', methods=['GET'])
 @login_required
 def view_get_protocol_excel():
-    data = extract_payload()
-    log.info(f'--->\n\tPROTOCOL ACTION. \n\tARGS: {data}\n\t<---')
-    return report_01(g.user.rfbn_id)
+    params = {'rfbn_id': g.user.rfbn_id[0:2], 'period': session['period']}
+    return report_01(params)
 
