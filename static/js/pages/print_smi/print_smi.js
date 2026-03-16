@@ -1,5 +1,5 @@
-import { SaveChangeFormBinder } from '/static/js/pages/print_smi/binders/SaveChangeFormBinder.js';
-import { SetActionBinder } from '/static/js/pages/print_smi/binders/SetActionBinder.js';
+import { SaveChangeFormBinder } from '/static/js/pages/print_smi/binders/saveChangeFormBinder.js';
+import { SetActionBinder } from '/static/js/pages/print_smi/binders/setActionBinder.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     SaveChangeFormBinder.attachAll(document);

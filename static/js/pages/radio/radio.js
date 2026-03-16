@@ -1,5 +1,5 @@
-import { SaveChangeFormBinder } from '/static/js/pages/radio/binders/SaveChangeFormBinder.js';
-import { SetActionBinder } from '/static/js/pages/radio/binders/SetActionBinder.js';
+import { SaveChangeFormBinder } from '/static/js/pages/radio/binders/saveChangeFormBinder.js';
+import { SetActionBinder } from '/static/js/pages/radio/binders/setActionBinder.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     SaveChangeFormBinder.attachAll(document);

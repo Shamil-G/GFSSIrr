@@ -1,5 +1,5 @@
-import { SaveChangeFormBinder } from '/static/js/pages/open_door/binders/SaveChangeFormBinder.js';
-import { SetActionBinder } from '/static/js/pages/open_door/binders/SetActionBinder.js';
+import { SaveChangeFormBinder } from '/static/js/pages/open_door/binders/saveChangeFormBinder.js';
+import { SetActionBinder } from '/static/js/pages/open_door/binders/setActionBinder.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     SaveChangeFormBinder.attachAll(document);
