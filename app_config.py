@@ -13,7 +13,7 @@ language = 'ru'
 REPORT_PATH='reports/'
 UPLOAD_DIR='uploads'
 
-#tester = {'login_name': 'Гусейнов', 'rfbn_id': '1600', 'top_level': 2, 'top_view': 1} 
+#tester = {'login_name': 'Гусейнов', 'rfbn_id': '1600', 'top_level': 0, 'top_view': 0} 
 tester = {} 
 
 permit_post = ['Специалист', 'Главный специалист', 'Юрист', 'Внештатный работник',  ]

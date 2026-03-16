@@ -1,7 +1,7 @@
 <div id="form_meet_population"
-     {% if data.page %}
          data-district="{{ data.district }}"
          data-districts='{{ districts | tojson | safe }}'
+     {% if data.page %}
          data-path-photo='{{ data.path_photo | tojson | safe }}'
      {% endif %}
      style="overflow: auto" class="scroll-x-y">
