@@ -56,12 +56,14 @@
 
         <nav>
             {% if g.user.is_authenticated %}
-                <a class="nav_button" href="/meet_labor">{{ res_value('MEET_LABOR') }}</a>
-                <a class="nav_button" href="/meet_population">{{ res_value('MEET_POPULATION') }}</a>
-                <a class="nav_button" href="/list-protocols">{{ res_value('LIST_PROTOCOLS') }}</a>
-                <a class="nav_button" href="/logout">{{ res_value('LOGOUT_BUTTON') }}</a>
+                <a class="nav_button" href="/meeting">{{ res_value('WORK_WITH_POPULATION') }}</a>
+                <a class="nav_button" href="/print_smi">{{ res_value('WORK_PRINT_SMI') }}</a>
+                <a class="nav_button" href="/radio">{{ res_value('WORK_RADIO') }}</a>
+                <a class="nav_button" href="/round_table">{{ res_value('WORK_ROUND_TABLE') }}</a>
+                <a class="nav_button" href="/open_door">{{ res_value('WORK_OPEN_DOOR') }}</a>
+                <a class="nav_button" href="/logout">{{ res_value('LOGOUT_BUTTON')}}</a>
             {% else %}
-                <a class="nav_button" href="/login">{{ res_value('LOGIN_BUTTON') }}</a>
+            <a class="nav_button" href="/login">{{ res_value('LOGIN_BUTTON') }}</a>
             {% endif %}
             <p></p>
         </nav>

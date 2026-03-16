@@ -78,7 +78,8 @@ def select_one(stmt, args):
                 cursor.execute(stmt, args)
                 columns = [ col[0].lower() if is_english_column(col[0]) else col[0] for col in cursor.description ]
                 row = cursor.fetchone()
-                result=dict(zip(columns, row))
+                if row:
+                    result=dict(zip(columns, row))
                 return result
             except oracledb.DatabaseError as e:
                 error, = e.args

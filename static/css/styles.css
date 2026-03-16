@@ -31,7 +31,7 @@
     --tbody-tr-even: #fffce8;
     --tr-active-row: #d0ebff;
     --tr-hover: #d9f0ff;
-    --tab-background: #c8e6c9;
+    --tab-background: #96cc98;
     --tab-background-active: #d0ebff;
     --tab-content-active-border-top: 1px solid #75a6fd;
     --tab-content-active-border-right: 1px solid #75a6fd;
@@ -165,7 +165,7 @@ article {
 article_title {
     display: grid; /*Для выравнивания заголовка по центру*/
     padding-right: 8px;
-    padding-left: 24px;
+    padding-left: 4px;
     font-size: 20px;
     align-items: center; /* Выравниваем по вертикали*/
     align-items: center; /*Для выравнивания заголовка по центру*/
@@ -223,9 +223,10 @@ nav > a {
 .tab-panel.active {
     display: block;
 }
-* {
+/** {
     transition: background-color .25s ease, color .25s ease, border-color .25s ease;
 }
+*/
 body {
     background: var(--bg);
     color: var(--fg);
@@ -410,7 +411,7 @@ tbody:not(.my_stick) tr.active-row {
     display: block;
 }
 .tab {
-    background: var(--tab-background);
+    /*background: var(--tab-background);*/
     padding: 10px 20px;
     border: none;
     cursor: pointer;
@@ -453,10 +454,10 @@ button, .button {
 }
 
 button:hover, .button:hover {
-    transform: translateY(1px);
+    /*transform: translateY(1px);*/
     box-shadow: 4px 4px 6px rgba(0, 0, 0, 0.2);
     text-shadow: 1px 2px 3px grey;
-    transition: .3s linear;
+    transition: .1s linear;
 }
 
 .dropdown {
@@ -737,4 +738,35 @@ thead th {
 input[type="month"]::-webkit-calendar-picker-indicator {
     opacity: 0;
     cursor: pointer;
+}
+/* Общий стиль для обоих select */
+#region-select,
+#district-select {
+    overflow-y: auto;
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #00a000 #e8e8e8; /* Firefox */
+}
+
+/* WebKit (Chrome, Edge, Safari) */
+#region-select::-webkit-scrollbar,
+#district-select::-webkit-scrollbar {
+    width: 4px;
+}
+
+#region-select::-webkit-scrollbar-track,
+#district-select::-webkit-scrollbar-track {
+    background: #e8e8e8;
+    border-radius: 2px;
+}
+
+#region-select::-webkit-scrollbar-thumb,
+#district-select::-webkit-scrollbar-thumb {
+    background: #00a000; /* зелёный бегунок */
+    border-radius: 2px;
+    transition: background 0.2s ease;
+}
+
+#region-select::-webkit-scrollbar-thumb:hover,
+#district-select::-webkit-scrollbar-thumb:hover {
+    background: #008800; /* чуть темнее при наведении */
 }

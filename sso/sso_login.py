@@ -1,10 +1,16 @@
 from flask import session
 from util.ip_addr import ip_addr
 from util.logger import log
-from app_config import top_post, middle_post, work_post
+from app_config import top_post, top_view, middle_post, work_post, tester
 
      
 class SSO_User:
+    def check_tester(self):
+        if 'login_name' in tester and tester['login_name']==self.username:
+            self.rfbn_id=tester['rfbn_id']
+            self.top_level=tester['top_level']
+            self.top_view=tester['top_view']
+
     def get_user_by_name(self, src_user):
         ip = ip_addr()
         self.src_user = src_user
@@ -12,6 +18,7 @@ class SSO_User:
         self.dep_name=''
         self.roles=''
         self.top_level=0
+        self.top_view=0
 
         if 'password' in session:
             self.password = session['password']
@@ -47,6 +54,12 @@ class SSO_User:
             if self.dep_name in list_top_dep:
                 self.roles='TOP'
                 self.top_level=2
+                self.top_view=1
+
+            if self.top_view==0:
+                list_top_view= top_view.get(self.post,[])
+                if '*' in list_top_view or self.dep_name in list_top_view:
+                    self.top_view=1
 
             log.debug(f'SSO. list_admin_dep: {list_top_dep}. top_level: {self.top_level}')
             # check user right
@@ -75,12 +88,18 @@ class SSO_User:
                 session['roles']=self.roles
                 
             session['top_level']=self.top_level
+            session['top_view']=self.top_view
 
             self.full_name = self.fio
             session['full_name'] = self.fio
 
             self.ip_addr = ip
-            log.info(f"--->\n\tSSO SUCCESS\n\tUSERNAME: {self.username}\n\tIP_ADDR: {self.ip_addr}\n\tFIO: {self.fio}\n\tROLES: {self.roles}, POST: {self.post}\n\tRFBN: {self.rfbn_id}\n\tDEP_NAME: {self.dep_name}\n<---")
+
+            self.check_tester()
+
+            log.info(f"--->\n\tSSO SUCCESS\n\tUSERNAME: {self.username}\n\tIP_ADDR: {self.ip_addr}\n\tFIO: {self.fio}" 
+                     f"\n\tROLES: {self.roles}\n\tPOST: {self.post}\n\tTOP_VIEW: {self.top_view}\n\tTOP_LEVEL: {self.top_level}"
+                     f"\n\tRFBN: {self.rfbn_id}\n\tDEP_NAME: {self.dep_name}\n<---")
             return self
         log.info(f"---> SSO FAIL. USERNAME: {src_user}\n\tip_addr: {ip}, password: {session['password']}\n<---")
         return None

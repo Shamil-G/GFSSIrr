@@ -1,15 +1,12 @@
 ﻿from flask import g, request, render_template, redirect, url_for
 from flask_login import login_required
 from util.functions import upload_files, extract_payload
-from model.functions import get_org_name
 from main_app import app, log
-from model.functions import get_list_rayons
 from functools import lru_cache
-from model.functions import load_protocol
 from regions import regions
-from model.functions import get_list_rayons, get_partners, update_protocol
 import json
 from datetime import datetime
+from model.irr_functions import get_org_name, get_list_rayons, load_protocol, get_partners, update_protocol
 
 
 @app.route('/api/organization/', methods=['POST'])
@@ -17,8 +14,8 @@ from datetime import datetime
 def view_organization_name():
     data=extract_payload()
     log.info(f"API_ORGANIZATION: {data}")
-    bin = data['bin']
-    return get_org_name(bin)
+    # bin = data['bin']
+    return get_org_name(data)
 
 
 @lru_cache(maxsize=32)
@@ -27,6 +24,13 @@ def get_cached_rayons(rfbn_id: str):
     rayons = get_list_rayons(rfbn_id) or []
     return {item['rfbn_id']: item['name'] for item in rayons}
 
+
+def category_to_english(nm: str)->str:
+    match nm:
+        case 'большой': return 'large' 
+        case 'средний': return 'middle' 
+        case 'малый': return 'small' 
+        case _: return nm
 
 
 @app.route('/edit-protocol/<prot_num>', methods=['GET', 'POST']) 
