@@ -35,7 +35,7 @@ def view_radio_action():
     set_action('RADIO ACTION', 'begin radio.set_action(:action, :prot_num, :top_level); end;', args);
 
     log.info(f'--->\n\tRADIO ACTION. \n\tARGS: {args}\n\t<---')
-    return redirect(url_for('view_protocol_radio'))
+    return redirect(url_for('view_radio_protocol'))
 
 
 @app.route('/radio/form', methods=['GET', 'POST'])

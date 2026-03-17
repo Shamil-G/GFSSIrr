@@ -35,7 +35,7 @@ def view_open_door_action():
     set_action('OPEN DOOR ACTION', 'begin open_door.set_action(:action, :prot_num, :top_level); end;', args);
 
     log.info(f'--->\n\tOPEN DOOR ACTION. \n\tARGS: {args}\n\t<---')
-    return redirect(url_for('view_protocol_open_door'))
+    return redirect(url_for('view_open_door_protocol'))
 
 
 @app.route('/open_door/form', methods=['GET', 'POST'])

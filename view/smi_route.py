@@ -37,7 +37,7 @@ def view_print_smi_action():
     set_action('PRINT_SMI ACTION', 'begin smi.set_action(:action, :prot_num, :top_level); end;', args);
 
     log.info(f'--->\n\tPRINT SMI ACTION. \n\tARGS: {args}\n\t<---')
-    return redirect(url_for('view_protocol_print_smi'))
+    return redirect(url_for('view_print_smi_protocol'))
 
 
 @app.route('/print_smi/form', methods=['GET', 'POST'])

@@ -35,7 +35,7 @@ def view_round_table_action():
     set_action('ROUND TABLE ACTION', 'begin round_table.set_action(:action, :prot_num, :top_level); end;', args);
 
     log.info(f'--->\n\tROUND TABLE ACTION. \n\tARGS: {args}\n\t<---')
-    return redirect(url_for('view_protocol_round_table'))
+    return redirect(url_for('view_round_table_protocol'))
 
 
 @app.route('/round_table/form', methods=['GET', 'POST'])

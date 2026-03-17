@@ -34,7 +34,7 @@ def view_protocol_action():
     args = {'action': data['action'], 'prot_num': data['prot_num'], 'top_level': g.user.top_level}
     set_action('VIEW ACTION', 'begin manage.set_action(:action, :prot_num, :top_level); end;', args);
 
-    return redirect(url_for('view_protocol_meet'))
+    return redirect(url_for('view_meet_protocol'))
 
 
 @app.route('/meet/report', methods=['GET'])
