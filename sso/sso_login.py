@@ -1,9 +1,15 @@
+import re
 from flask import session
 from util.ip_addr import ip_addr
 from util.logger import log
 from app_config import top_post, top_view, middle_post, work_post, tester
 
-     
+
+def has_invalid_symbols(text: str) -> bool:
+    # латиница или цифры
+    return bool(re.search(r"[A-Za-z0-9]", text))
+
+
 class SSO_User:
     def check_tester(self):
         if 'login_name' in tester and tester['login_name']==self.username:
@@ -48,6 +54,10 @@ class SSO_User:
 
             # post
             self.post = src_user.get('post','')
+            if has_invalid_symbols(self.post):
+                log.info(f"---> SSO\n\tUSER {self.username} имеет в должности {self.post} недействителный символ: не цифры и не кириллица\n<---")
+                return
+
             session['post']=self.post
             # check admin right!
             list_top_dep = top_post.get(self.post,[])
@@ -72,6 +82,8 @@ class SSO_User:
             # check user right
             if self.top_level==0:
                 list_work_dep = work_post.get(self.post,[])
+
+                #log.info(f'*** POST: {self.post}\n\tWORK POST: {work_post}\n\tLIST WORK: {list_work_dep}\n***')
                 if '*' in list_work_dep or self.dep_name in list_work_dep:
                     self.roles='Operator'
                 else:
